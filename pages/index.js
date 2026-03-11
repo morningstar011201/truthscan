@@ -285,7 +285,7 @@ export default function TruthScan() {
           )}
 
           <div style={{ textAlign: "center", fontFamily: "monospace", fontSize: 9, color: "#2a3040", letterSpacing: 2, paddingTop: 16 }}>
-            TRUTHSCAN AI — FOR ENTERTAINMENT PURPOSES ONLY
+            TRUTHSCAN AI
           </div>
         </div>
       </div>
