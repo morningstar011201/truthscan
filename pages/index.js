@@ -683,16 +683,12 @@ export default function TruthScan() {
               )}
 
               {/* ACTION BUTTONS */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                {["🔄 Analyze Another", "🕵️ Test Someone Else", "⚡ New Truth Scan"].map((label, i) => (
-                  <button key={i} onClick={reset}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,255,224,0.06)"; e.currentTarget.style.color = "#00ffe0"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#445060"; }}
-                    style={{ padding: "13px 8px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", color: "#445060", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}>
-                    {label}
-                  </button>
-                ))}
-              </div>
+             <button onClick={reset}
+  onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,255,224,0.06)"; e.currentTarget.style.color = "#00ffe0"; }}
+  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#445060"; }}
+  style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", color: "#445060", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}>
+  ⚡ New Truth Scan
+</button>
 
             </div>
           )}
