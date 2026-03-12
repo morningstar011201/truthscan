@@ -135,16 +135,10 @@ export default function TruthScan() {
     if (inputMode === "text" && chat.trim().length < 10) { setErr("Please paste a conversation first."); return; }
     if (inputMode === "image" && !imageBase64) { setErr("Please upload a screenshot first."); return; }
 
-    // Check usage limit for free users
+    // Force login before use
     if (!user) {
-      const localCount = parseInt(localStorage.getItem("ts_free_count") || "0");
-      if (localCount >= FREE_LIMIT) {
-        setErr("❌ You've used all 3 free analyses! Please sign up to continue.");
-        setShowAuth(true);
-        return;
-      }
-    } else if (profile && profile.plan === "free" && profile.free_scans_used >= FREE_LIMIT) {
-      setErr("❌ You've used all 3 free analyses! Please upgrade to continue.");
+      setErr("❌ Please sign in to use TruthScan!");
+      setShowAuth(true);
       return;
     }
 
