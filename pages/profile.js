@@ -72,7 +72,7 @@ export default function ProfilePage() {
     logoSpan: { color: "#00ffe0" },
     backBtn: { background: "transparent", border: "1px solid rgba(0,255,224,0.2)", color: "#00ffe0", padding: "7px 16px", borderRadius: 8, cursor: "pointer", fontSize: 12, letterSpacing: 1 },
     container: { maxWidth: 580, margin: "0 auto", padding: "32px 20px" },
-    avatar: { width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(135deg, #00ffe0, #0066ff)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 900, color: "#060a12", margin: "0 auto 16px", border: "3px solid rgba(0,255,224,0.3)" },
+    avatar: { width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(135deg, #0a4a42, #0a2a4a)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 900, color: "#060a12", margin: "0 auto 16px", border: "3px solid rgba(0,255,224,0.3)" },
     emailBadge: { textAlign: "center", marginBottom: 32 },
     emailText: { fontSize: 13, color: "#00ffe0", background: "rgba(0,255,224,0.07)", padding: "6px 18px", borderRadius: 20, display: "inline-block", border: "1px solid rgba(0,255,224,0.15)" },
     planBadge: { fontSize: 11, color: "#888", marginTop: 6 },
