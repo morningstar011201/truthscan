@@ -164,6 +164,16 @@ export default function TruthScan() {
       setResult(parsed);
       setStage("results");
 
+      // Check daily limit
+    const today = new Date().toISOString().split("T")[0];
+    const isNewDay = profile?.last_scan_date !== today;
+    const dailyUsed = isNewDay ? 0 : (profile?.daily_scans_used || 0);
+    
+    if (profile?.plan === "free" && dailyUsed >= FREE_LIMIT) {
+      setErr("❌ Daily free analysis used! Come back tomorrow or upgrade.");
+      setStage("input");
+      return;
+    }
       // Update usage count
       if (!user) {
         const localCount = parseInt(localStorage.getItem("ts_free_count") || "0");
