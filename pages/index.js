@@ -200,11 +200,14 @@ export default function TruthScan() {
         });
 
         // Update profile usage
-        await supabase.from("profiles").update({
-          free_scans_used: (profile?.free_scans_used || 0) + 1,
-          total_scans: (profile?.total_scans || 0) + 1,
-          updated_at: new Date().toISOString()
-        }).eq("id", user.id);
+        const today2 = new Date().toISOString().split("T")[0];
+const isNewDay2 = profile?.last_scan_date !== today2;
+await supabase.from("profiles").update({
+  daily_scans_used: isNewDay2 ? 1 : (profile?.daily_scans_used || 0) + 1,
+  last_scan_date: today2,
+  total_scans: (profile?.total_scans || 0) + 1,
+  updated_at: new Date().toISOString()
+}).eq("id", user.id);
 
         fetchProfile(user.id);
       }
