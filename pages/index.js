@@ -9,7 +9,7 @@ const SCAN_STEPS = [
   { label: "Generating truth report", pct: 100 },
 ];
 
-const FREE_LIMIT = 3;
+const FREE_LIMIT = 1;
 
 function Bar({ pct, color }) {
   const [w, setW] = useState(0);
