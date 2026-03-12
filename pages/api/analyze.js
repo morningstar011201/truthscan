@@ -5,14 +5,14 @@ export default async function handler(req, res) {
   if (!prompt) return res.status(400).json({ error: "Missing prompt" });
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "llama-3.1-70b-versatile",
         max_tokens: 800,
         temperature: 0.85,
         messages: [{ role: "user", content: prompt }]
