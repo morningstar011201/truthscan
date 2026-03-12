@@ -73,15 +73,15 @@ export default function TruthScan() {
     }
 
     try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages })
-      });
-      clearInterval(iv);
-      if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || `Error ${res.status}`); }
-      const data = await res.json();
-      const raw = data.content?.[0]?.text || "";
+    const res = await fetch("/api/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ prompt: inputMode === "image" ? messages[0].content[1].text : messages[0].content })
+});
+clearInterval(iv);
+if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || `Error ${res.status}`); }
+const data = await res.json();
+const raw = data.text || "";
       const match = raw.match(/\{[\s\S]*\}/);
       if (!match) throw new Error("Could not parse. Try again.");
       setResult(JSON.parse(match[0]));
