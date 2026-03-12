@@ -440,10 +440,19 @@ await supabase.from("profiles").update({
               </div>
             )}
             {user && profile && (
-              <div style={{ marginTop: 14, display: "inline-block", padding: "6px 16px", background: "rgba(0,255,224,0.06)", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 20, fontFamily: "monospace", fontSize: 11, color: "#00ffe0" }}>
-                👤 {user.email?.split("@")[0]} · {profile.total_scans || 0} total scans
-              </div>
-            )}
+  <div style={{ marginTop: 14, display: "inline-block", padding: "6px 16px", background: "rgba(0,255,224,0.06)", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 20, fontFamily: "monospace", fontSize: 11, color: "#00ffe0" }}>
+    {(() => {
+      const today = new Date().toISOString().split("T")[0];
+      const isNewDay = profile?.last_scan_date !== today;
+      const dailyUsed = isNewDay ? 0 : (profile?.daily_scans_used || 0);
+      return profile?.plan === "free"
+        ? dailyUsed >= FREE_LIMIT
+          ? "❌ Daily scan used — Upgrade or come back tomorrow"
+          : `⚡ 1 free scan today remaining · ${profile.total_scans || 0} total`
+        : `✅ ${profile.plan} plan · ${profile.total_scans || 0} total scans`;
+    })()}
+  </div>
+)}
           </div>
 
           {/* INPUT */}
