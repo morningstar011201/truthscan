@@ -33,7 +33,16 @@ export default function TruthScan() {
   const [imageBase64, setImageBase64] = useState(null);
   const [imageMime, setImageMime] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const fileRef = useRef();
+  const shareCardRef = useRef();
+
+  useEffect(() => {
+    // Load html2canvas
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    document.head.appendChild(script);
+  }, []);
 
   function handleFile(file) {
     if (!file || !file.type.startsWith("image/")) { setErr("Please upload a valid image file."); return; }
@@ -60,28 +69,28 @@ export default function TruthScan() {
     let i = 0;
     const iv = setInterval(() => { i = Math.min(i + 1, 3); setStep(i); }, 900);
 
-    const schema = `{"interestScore":<0-100>,"interestDesc":"<one punchy sentence>","lieScore":<0-100>,"lieDesc":"<one punchy sentence>","greenFlags":["<phrase>","<phrase>","<phrase>"],"redFlags":["<phrase>","<phrase>"],"emotionalIntent":"<2-3 sentence psychological insight>","verdict":"<one bold dramatic verdict>"}`;
+    const schema = `{"interestScore":<0-100>,"interestDesc":"<one punchy sentence max 8 words>","lieScore":<0-100>,"lieDesc":"<one punchy sentence max 8 words>","greenFlags":["<3-4 word phrase>","<3-4 word phrase>","<3-4 word phrase>"],"redFlags":["<3-4 word phrase>","<3-4 word phrase>"],"emotionalIntent":"<2-3 sentence psychological insight>","verdict":"<one bold dramatic verdict without asterisks>"}`;
 
     let messages;
     if (inputMode === "image") {
       messages = [{ role: "user", content: [
         { type: "image", source: { type: "base64", media_type: imageMime, data: imageBase64 } },
-        { type: "text", text: `You are TruthScan AI. Extract all chat messages from this screenshot (supports Hindi/Hinglish/Urdu/English), then analyze psychologically. Reply ONLY raw JSON no markdown:\n${schema}` }
+        { type: "text", text: `You are TruthScan AI. Extract all chat messages from this screenshot (supports Hindi/Hinglish/Urdu/English), then analyze psychologically. Reply ONLY raw JSON no markdown no asterisks:\n${schema}` }
       ]}];
     } else {
-      messages = [{ role: "user", content: `You are TruthScan AI. Analyze this conversation (Hindi/Hinglish/Urdu/English). Reply ONLY raw JSON no markdown:\n${schema}\n\nCONVERSATION:\n${chat}` }];
+      messages = [{ role: "user", content: `You are TruthScan AI. Analyze this conversation (Hindi/Hinglish/Urdu/English). Reply ONLY raw JSON no markdown no asterisks:\n${schema}\n\nCONVERSATION:\n${chat}` }];
     }
 
     try {
-    const res = await fetch("/api/analyze", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ prompt: inputMode === "image" ? messages[0].content[1].text : messages[0].content })
-});
-clearInterval(iv);
-if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || `Error ${res.status}`); }
-const data = await res.json();
-const raw = data.text || "";
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: inputMode === "image" ? messages[0].content[1].text : messages[0].content })
+      });
+      clearInterval(iv);
+      if (!res.ok) { const e = await res.json(); throw new Error(e?.error?.message || `Error ${res.status}`); }
+      const data = await res.json();
+      const raw = data.text || "";
       const match = raw.match(/\{[\s\S]*\}/);
       if (!match) throw new Error("Could not parse. Try again.");
       setResult(JSON.parse(match[0]));
@@ -98,10 +107,48 @@ const raw = data.text || "";
   function copyReport() {
     const r = result;
     navigator.clipboard.writeText(
-      `⚡ TRUTHSCAN AI REPORT\n\n📊 Interest: ${r.interestScore}%\n🔍 Lie Probability: ${r.lieScore}%\n\n✅ Green Flags: ${r.greenFlags?.join(" | ")}\n🚩 Red Flags: ${r.redFlags?.join(" | ")}\n\n🧠 ${r.emotionalIntent}\n\n🎯 VERDICT: ${r.verdict}\n\n— TruthScan AI`
+      `⚡ TRUTHSCAN AI REPORT\n\n📊 Interest: ${r.interestScore}%\n🔍 Lie Probability: ${r.lieScore}%\n\n✅ Green Flags: ${r.greenFlags?.join(" | ")}\n🚩 Red Flags: ${r.redFlags?.join(" | ")}\n\n🧠 ${r.emotionalIntent}\n\n🎯 VERDICT: ${r.verdict}\n\nAnalyzed at truthscan.in`
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+  }
+
+  async function shareAsImage() {
+    if (!shareCardRef.current || !window.html2canvas) return;
+    setSharing(true);
+    try {
+      const canvas = await window.html2canvas(shareCardRef.current, {
+        backgroundColor: "#080b10",
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      const imageData = canvas.toDataURL("image/png");
+
+      // Try native share (mobile)
+      if (navigator.share && navigator.canShare) {
+        const blob = await (await fetch(imageData)).blob();
+        const file = new File([blob], "truthscan-result.png", { type: "image/png" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "TruthScan AI Result",
+            text: `🎯 ${result.verdict}\n\nAnalyzed at truthscan.in`,
+            files: [file],
+          });
+          setSharing(false);
+          return;
+        }
+      }
+
+      // Fallback: download image
+      const link = document.createElement("a");
+      link.download = "truthscan-result.png";
+      link.href = imageData;
+      link.click();
+    } catch (e) {
+      console.error(e);
+    }
+    setSharing(false);
   }
 
   const card = { background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px 22px", marginBottom: 12 };
@@ -113,8 +160,6 @@ const raw = data.text || "";
         <meta name="description" content="Analyze any chat conversation with AI. Detect interest level, lie probability, red flags and hidden emotional intent." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-
-        {/* Open Graph for WhatsApp/Instagram sharing */}
         <meta property="og:title" content="TruthScan AI — Is Someone Lying to You?" />
         <meta property="og:description" content="Paste any chat and AI will reveal the hidden truth. Interest level, lie probability, red flags and more!" />
         <meta property="og:type" content="website" />
@@ -150,8 +195,6 @@ const raw = data.text || "";
           {/* INPUT STAGE */}
           {stage === "input" && (
             <div style={{ animation: "fadeUp 0.4s ease both" }}>
-
-              {/* TABS */}
               <div style={{ display: "flex", gap: 8, marginBottom: 14, background: "#0d1520", padding: 6, borderRadius: 12, border: "1px solid rgba(255,255,255,0.07)" }}>
                 {[{ id: "text", icon: "💬", label: "Paste Text" }, { id: "image", icon: "📸", label: "Upload Screenshot" }].map(tab => (
                   <button key={tab.id} onClick={() => { setInputMode(tab.id); setErr(""); }}
@@ -161,7 +204,6 @@ const raw = data.text || "";
                 ))}
               </div>
 
-              {/* TEXT INPUT */}
               {inputMode === "text" && (
                 <div style={{ ...card, position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg,transparent,#00ffe0,transparent)", opacity: 0.5 }} />
@@ -173,7 +215,6 @@ const raw = data.text || "";
                 </div>
               )}
 
-              {/* IMAGE INPUT */}
               {inputMode === "image" && (
                 <div style={{ ...card, position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg,transparent,#00ffe0,transparent)", opacity: 0.5 }} />
@@ -235,52 +276,96 @@ const raw = data.text || "";
           {/* RESULTS */}
           {stage === "results" && result && (
             <div style={{ animation: "fadeUp 0.4s ease both" }}>
-              <div style={{ ...card, textAlign: "center", position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg,#ff3d6e,#00ffe0,#ffe600)" }} />
-                <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: 3 }}>✅ ANALYSIS COMPLETE</div>
-                <div style={{ fontFamily: "monospace", fontSize: 10, color: "#445060", letterSpacing: 2, marginTop: 6 }}>{new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
-              </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
-                {[{ label: "INTEREST LEVEL", score: result.interestScore, desc: result.interestDesc, color: "#00ffe0" }, { label: "LIE PROBABILITY", score: result.lieScore, desc: result.lieDesc, color: "#ff3d6e" }].map((c, i) => (
-                  <div key={i} style={{ background: "#0d1520", border: `1px solid ${c.color}20`, borderRadius: 14, padding: "20px" }}>
-                    <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 10 }}>{c.label}</div>
-                    <div style={{ fontSize: 54, fontWeight: 900, color: c.color, lineHeight: 1 }}>{c.score}%</div>
-                    <Bar pct={c.score} color={c.color} />
-                    <div style={{ fontSize: 12, color: "#556070", marginTop: 10, lineHeight: 1.6 }}>{c.desc}</div>
+              {/* SHAREABLE CARD - this gets captured as image */}
+              <div ref={shareCardRef} style={{ background: "#080b10", padding: "24px", borderRadius: 16, border: "1px solid rgba(0,255,224,0.15)" }}>
+
+                {/* Card Header */}
+                <div style={{ textAlign: "center", marginBottom: 20 }}>
+                  <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>
+                    TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span>
                   </div>
-                ))}
-              </div>
-
-              <div style={card}>
-                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 14 }}>FLAG ANALYSIS</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {result.greenFlags?.map((f, i) => <span key={i} style={{ padding: "7px 13px", borderRadius: 6, fontSize: 13, fontWeight: 600, background: "rgba(0,255,100,0.07)", border: "1px solid rgba(0,255,100,0.18)", color: "#00e85a" }}>✅ {f}</span>)}
-                  {result.redFlags?.map((f, i) => <span key={i} style={{ padding: "7px 13px", borderRadius: 6, fontSize: 13, fontWeight: 600, background: "rgba(255,61,110,0.07)", border: "1px solid rgba(255,61,110,0.18)", color: "#ff3d6e" }}>🚩 {f}</span>)}
+                  <div style={{ fontFamily: "monospace", fontSize: 9, color: "#445060", letterSpacing: 2, marginTop: 4 }}>AI CHAT ANALYSIS — {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
                 </div>
-              </div>
 
-              <div style={card}>
-                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 14 }}>EMOTIONAL INTENT</div>
-                <div style={{ fontSize: 14, fontWeight: 300, lineHeight: 1.9, fontStyle: "italic", borderLeft: "2px solid #00ffe0", paddingLeft: 16, color: "#b0bac8" }}>{result.emotionalIntent}</div>
-              </div>
-
-              <div style={{ background: "linear-gradient(135deg,#0b1e1a,#0d1820)", border: "1px solid rgba(0,255,224,0.12)", borderRadius: 14, padding: "22px", marginBottom: 12 }}>
-                <div style={{ fontSize: 17, fontWeight: 900, letterSpacing: 2, marginBottom: 18 }}>📊 SHAREABLE REPORT</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-                  {[{ l: "INTEREST", v: result.interestScore + "%", c: "#00ffe0" }, { l: "LIE PROB.", v: result.lieScore + "%", c: "#ff3d6e" }, { l: "GREEN FLAGS", v: result.greenFlags?.length, c: "#00e85a" }, { l: "RED FLAGS", v: result.redFlags?.length, c: "#ffe600" }].map((m, i) => (
-                    <div key={i} style={{ background: "rgba(0,0,0,0.25)", borderRadius: 10, padding: "12px 14px", border: "1px solid rgba(255,255,255,0.04)" }}>
-                      <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#445060", marginBottom: 6 }}>{m.l}</div>
-                      <div style={{ fontSize: 32, fontWeight: 900, color: m.c, lineHeight: 1 }}>{m.v}</div>
+                {/* Score Cards */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+                  {[{ label: "INTEREST LEVEL", score: result.interestScore, desc: result.interestDesc, color: "#00ffe0" }, { label: "LIE PROBABILITY", score: result.lieScore, desc: result.lieDesc, color: "#ff3d6e" }].map((c, i) => (
+                    <div key={i} style={{ background: "#0d1520", border: `1px solid ${c.color}20`, borderRadius: 12, padding: "16px" }}>
+                      <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>{c.label}</div>
+                      <div style={{ fontSize: 44, fontWeight: 900, color: c.color, lineHeight: 1 }}>{c.score}%</div>
+                      <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden", marginTop: 8 }}>
+                        <div style={{ height: "100%", width: `${c.score}%`, background: c.color, borderRadius: 2 }} />
+                      </div>
+                      <div style={{ fontSize: 11, color: "#556070", marginTop: 8, lineHeight: 1.5 }}>{c.desc}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: 10, padding: "14px 16px", borderLeft: "3px solid #00ffe0", fontSize: 14, fontWeight: 600, lineHeight: 1.6, marginBottom: 18 }}>🎯 {result.verdict}</div>
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                  <button onClick={copyReport} style={{ padding: "12px 20px", borderRadius: 10, border: "1px solid rgba(0,255,224,0.28)", background: "rgba(0,255,224,0.08)", color: "#00ffe0", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>{copied ? "✅ Copied!" : "📋 Copy Report"}</button>
-                  <button onClick={reset} style={{ padding: "12px 20px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", color: "#dde2ea", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>🔄 Analyze Another</button>
+
+                {/* Flags */}
+                <div style={{ background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#445060", marginBottom: 10 }}>FLAG ANALYSIS</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {result.greenFlags?.map((f, i) => <span key={i} style={{ padding: "5px 10px", borderRadius: 5, fontSize: 12, fontWeight: 600, background: "rgba(0,255,100,0.07)", border: "1px solid rgba(0,255,100,0.18)", color: "#00e85a" }}>✅ {f}</span>)}
+                    {result.redFlags?.map((f, i) => <span key={i} style={{ padding: "5px 10px", borderRadius: 5, fontSize: 12, fontWeight: 600, background: "rgba(255,61,110,0.07)", border: "1px solid rgba(255,61,110,0.18)", color: "#ff3d6e" }}>🚩 {f}</span>)}
+                  </div>
+                </div>
+
+                {/* Verdict */}
+                <div style={{ background: "rgba(0,255,224,0.05)", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>VERDICT</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#00ffe0", lineHeight: 1.5 }}>🎯 {result.verdict}</div>
+                </div>
+
+                {/* Emotional Intent */}
+                <div style={{ background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>EMOTIONAL INTENT</div>
+                  <div style={{ fontSize: 12, fontWeight: 300, lineHeight: 1.8, fontStyle: "italic", borderLeft: "2px solid #00ffe0", paddingLeft: 12, color: "#b0bac8" }}>{result.emotionalIntent}</div>
+                </div>
+
+                {/* Watermark */}
+                <div style={{ textAlign: "center", fontFamily: "monospace", fontSize: 10, color: "#2a3a4a", letterSpacing: 3 }}>
+                  truthscan.in ⚡ DECODE THE TRUTH
                 </div>
               </div>
+
+              {/* ACTION BUTTONS */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 }}>
+                <button onClick={shareAsImage}
+                  style={{ padding: "14px", borderRadius: 10, border: "1px solid rgba(0,255,224,0.35)", background: "linear-gradient(135deg,rgba(0,255,224,0.15),rgba(0,255,224,0.05))", color: "#00ffe0", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}>
+                  {sharing ? "⏳ Generating..." : "📤 Share as Image"}
+                </button>
+                <button onClick={copyReport}
+                  style={{ padding: "14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#dde2ea", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+                  {copied ? "✅ Copied!" : "📋 Copy Text"}
+                </button>
+              </div>
+
+              {/* SHARE PLATFORMS */}
+              <div style={{ background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px", marginTop: 10 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 12 }}>SHARE ON</div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[
+                    { name: "WhatsApp", color: "#25D366", icon: "💬", url: `https://wa.me/?text=${encodeURIComponent(`🔍 My TruthScan AI Result:\n\n🎯 Verdict: ${result.verdict}\n📊 Interest: ${result.interestScore}% | Lie Prob: ${result.lieScore}%\n\nAnalyze your chats at truthscan.in ⚡`)}` },
+                    { name: "Twitter/X", color: "#1DA1F2", icon: "𝕏", url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`🔍 TruthScan AI analyzed my chat!\n\n🎯 ${result.verdict}\n📊 Interest: ${result.interestScore}% | Lie Prob: ${result.lieScore}%\n\nAnalyze yours at truthscan.in ⚡`)}` },
+                    { name: "Telegram", color: "#0088cc", icon: "✈️", url: `https://t.me/share/url?url=truthscan.in&text=${encodeURIComponent(`🔍 TruthScan AI Result:\n🎯 ${result.verdict}\n📊 Interest: ${result.interestScore}% | Lie Prob: ${result.lieScore}%`)}` },
+                    { name: "Facebook", color: "#1877F2", icon: "📘", url: `https://www.facebook.com/sharer/sharer.php?u=truthscan.in` },
+                  ].map((s, i) => (
+                    <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                      style={{ flex: 1, minWidth: 120, padding: "10px 8px", borderRadius: 8, background: `${s.color}15`, border: `1px solid ${s.color}30`, color: s.color, fontSize: 13, fontWeight: 600, cursor: "pointer", textDecoration: "none", textAlign: "center", display: "block" }}>
+                      {s.icon} {s.name}
+                    </a>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, color: "#2a3a4a", marginTop: 10, textAlign: "center", fontFamily: "monospace" }}>
+                  💡 Tap "Share as Image" first then share the image on Instagram/Stories
+                </div>
+              </div>
+
+              <button onClick={reset}
+                style={{ width: "100%", padding: "14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", color: "#dde2ea", fontSize: 14, fontWeight: 700, cursor: "pointer", marginTop: 10 }}>
+                🔄 Analyze Another Chat
+              </button>
             </div>
           )}
 
