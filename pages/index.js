@@ -583,7 +583,7 @@ await supabase.from("profiles").update({
                     <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#8899aa", marginBottom: 10 }}>{c.label}</div>
                     <div style={{ fontSize: 52, fontWeight: 900, color: c.color, lineHeight: 1 }}>{c.score}%</div>
                     <Bar pct={c.score} color={c.color} />
-                    <div style={{ fontSize: 12, color: "#556070", marginTop: 10, lineHeight: 1.6 }}>{c.desc}</div>
+                    <div style={{ fontSize: 12, color: "#aabbcc", marginTop: 10, lineHeight: 1.6 }}>{c.desc}</div>
                   </div>
                 ))}
               </div>
