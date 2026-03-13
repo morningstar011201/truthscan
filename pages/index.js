@@ -337,7 +337,7 @@ await supabase.from("profiles").update({
 
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                 <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
-                <div style={{ fontFamily: "monospace", fontSize: 10, color: "#445060" }}>OR</div>
+                <div style={{ fontFamily: "monospace", fontSize: 10, color: "#8899aa" }}>OR</div>
                 <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
               </div>
 
@@ -352,7 +352,7 @@ await supabase.from("profiles").update({
                 {authBusy ? "⏳ Please wait..." : authMode === "login" ? "⚡ SIGN IN" : "⚡ CREATE ACCOUNT"}
               </button>
 
-              <div style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: "#445060" }}>
+              <div style={{ textAlign: "center", marginTop: 16, fontSize: 13, color: "#8899aa" }}>
                 {authMode === "login" ? "Don't have an account? " : "Already have an account? "}
                 <span onClick={() => { setAuthMode(authMode === "login" ? "signup" : "login"); setAuthErr(""); setAuthMsg(""); }} style={{ color: "#00ffe0", cursor: "pointer", fontWeight: 600 }}>
                   {authMode === "login" ? "Sign up" : "Sign in"}
@@ -369,15 +369,15 @@ await supabase.from("profiles").update({
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                 <div>
                   <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>📂 Past Results</div>
-                  <div style={{ fontSize: 11, color: "#445060", marginTop: 4 }}>Your scan history</div>
+                  <div style={{ fontSize: 11, color: "#8899aa", marginTop: 4 }}>Your scan history</div>
                 </div>
-                <button onClick={() => setShowHistory(false)} style={{ background: "none", border: "none", color: "#445060", fontSize: 20, cursor: "pointer" }}>✕</button>
+                <button onClick={() => setShowHistory(false)} style={{ background: "none", border: "none", color: "#8899aa", fontSize: 20, cursor: "pointer" }}>✕</button>
               </div>
 
               {historyLoading ? (
-                <div style={{ textAlign: "center", color: "#445060", fontFamily: "monospace", fontSize: 12, padding: 40 }}>Loading...</div>
+                <div style={{ textAlign: "center", color: "#8899aa", fontFamily: "monospace", fontSize: 12, padding: 40 }}>Loading...</div>
               ) : history.length === 0 ? (
-                <div style={{ textAlign: "center", color: "#445060", fontFamily: "monospace", fontSize: 12, padding: 40 }}>No scans yet!</div>
+                <div style={{ textAlign: "center", color: "#8899aa", fontFamily: "monospace", fontSize: 12, padding: 40 }}>No scans yet!</div>
               ) : (
                 history.map((item, i) => (
                   <div key={i} onClick={() => viewHistoryResult(item)}
