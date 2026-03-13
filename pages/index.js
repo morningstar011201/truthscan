@@ -518,7 +518,7 @@ await supabase.from("profiles").update({
               </button>
 
               {!user && (
-                <div style={{ textAlign: "center", marginTop: 12, fontSize: 12, color: "#556070" }}>
+                <div style={{ textAlign: "center", marginTop: 12, fontSize: 12, color: "#8899aa" }}>
                   <span onClick={() => setShowAuth(true)} style={{ color: "#00ffe0", cursor: "pointer", textDecoration: "underline" }}>Sign in</span> to save results & view history
                 </div>
               )}
