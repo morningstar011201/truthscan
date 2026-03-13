@@ -145,7 +145,7 @@ export default function ProfilePage() {
                   return isNewDay ? 1 : Math.max(0, 1 - (profile?.daily_scans_used || 0));
                 })()}
               </div>
-              <div style={styles.statLabel}>SCANS TODAY</div>
+              <div style={styles.statLabel}>SCANS LEFT</div>
             </div>
           </div>
         </div>
