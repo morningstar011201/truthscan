@@ -10,13 +10,13 @@ export default async function handler(req, res) {
 
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-  // ADMIN ACTIONS
   if (action === "add_credits") {
     const { targetEmail, credits } = payload;
     const { data: profile } = await supabase.from("profiles").select("id, scan_credits").eq("email", targetEmail).single();
     if (!profile) return res.status(404).json({ error: "User not found" });
-    await supabase.from("profiles").update({ scan_credits: (profile.scan_credits || 0) + parseInt(credits) }).eq("id", profile.id);
-    await supabase.from("credit_history").insert({ user_id: profile.id, email: targetEmail, action: "admin_added", credits: parseInt(credits), admin_email: email, note: "Admin added" });
+    const newCredits = (profile.scan_credits || 0) + parseInt(credits);
+    await supabase.from("profiles").update({ scan_credits: newCredits }).eq("id", profile.id);
+    await supabase.from("credit_history").insert({ user_id: profile.id, email: targetEmail, action: "admin_added", credits: parseInt(credits), admin_email: email, note: "Admin added | Balance: " + newCredits });
     return res.json({ success: true });
   }
 
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     if (!profile) return res.status(404).json({ error: "User not found" });
     const newCredits = Math.max(0, (profile.scan_credits || 0) - parseInt(credits));
     await supabase.from("profiles").update({ scan_credits: newCredits }).eq("id", profile.id);
-    await supabase.from("credit_history").insert({ user_id: profile.id, email: targetEmail, action: "admin_deducted", credits: parseInt(credits), admin_email: email, note: "Admin deducted" });
+    await supabase.from("credit_history").insert({ user_id: profile.id, email: targetEmail, action: "admin_deducted", credits: parseInt(credits), admin_email: email, note: "Admin deducted | Balance: " + newCredits });
     return res.json({ success: true });
   }
 
@@ -43,6 +43,17 @@ export default async function handler(req, res) {
     const { data: profile } = await supabase.from("profiles").select("id").eq("email", targetEmail).single();
     if (!profile) return res.status(404).json({ error: "User not found" });
     await supabase.from("profiles").update({ is_banned: false }).eq("id", profile.id);
+    return res.json({ success: true });
+  }
+
+  if (action === "delete_user") {
+    const { targetEmail } = payload;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("email", targetEmail).single();
+    if (!profile) return res.status(404).json({ error: "User not found" });
+    await supabase.from("scan_results").delete().eq("user_id", profile.id);
+    await supabase.from("payments").delete().eq("user_id", profile.id);
+    await supabase.from("credit_history").delete().eq("user_id", profile.id);
+    await supabase.from("profiles").delete().eq("id", profile.id);
     return res.json({ success: true });
   }
 
@@ -92,18 +103,35 @@ export default async function handler(req, res) {
 
   const topUsers = [...(allUsers || [])].sort((a, b) => (b.total_scans || 0) - (a.total_scans || 0)).slice(0, 10);
 
-  // Conversion
+  // Active users today (did at least 1 scan today)
+  const activeToday = allUsers?.filter(u => u.last_scan_date === today).length || 0;
+
+  // Avg scans per user
+  const avgScansPerUser = allUsers?.length > 0 ? (scans?.length / allUsers.length).toFixed(1) : 0;
+
+  // First scan conversion
   const usersWhoScanned = allUsers?.filter(u => (u.total_scans || 0) > 0).length || 0;
+  const firstScanRate = allUsers?.length > 0 ? Math.round((usersWhoScanned / allUsers.length) * 100) : 0;
   const conversionRate = allUsers?.length > 0 ? Math.round((payingUserIds.length / allUsers.length) * 100) : 0;
 
+  // Cost estimator (Groq is free but estimate)
+  const costPerScan = 0.002; // estimated $0.002 per scan
+  const todayCost = (todayScans.length * costPerScan).toFixed(4);
+  const monthCost = (monthPayments.length > 0 ? scans?.filter(s => new Date(s.created_at) > new Date(monthAgo)).length : 0) * costPerScan;
+
+  // Viral users (scanned 5+ times)
+  const viralUsers = [...(allUsers || [])].filter(u => (u.total_scans || 0) >= 5).sort((a, b) => (b.total_scans || 0) - (a.total_scans || 0)).slice(0, 10);
+
   res.json({
-    users: { total: allUsers?.length || 0, today: todayUsers.length, week: weekUsers.length, paying: payingUserIds.length, all: allUsers || [] },
+    users: { total: allUsers?.length || 0, today: todayUsers.length, week: weekUsers.length, paying: payingUserIds.length, activeToday, all: allUsers || [] },
     revenue: { total: totalRevenue, today: todayRevenue, month: monthRevenue, arppu },
-    scans: { total: scans?.length || 0, today: todayScans.length, yesterday: yesterdayScans.length, perDay: scansPerDay },
+    scans: { total: scans?.length || 0, today: todayScans.length, yesterday: yesterdayScans.length, perDay: scansPerDay, avgPerUser: avgScansPerUser },
     payments: { total: payments?.length || 0, recent: payments?.slice(0, 50) || [] },
     packs: packStats,
     credits: { purchased: totalCreditsPurchased, used: totalCreditsPurchased - totalCreditsRemaining, remaining: totalCreditsRemaining },
     topUsers,
-    conversion: { total: allUsers?.length || 0, scanned: usersWhoScanned, paid: payingUserIds.length, rate: conversionRate },
+    viralUsers,
+    conversion: { total: allUsers?.length || 0, scanned: usersWhoScanned, paid: payingUserIds.length, rate: conversionRate, firstScanRate },
+    costs: { todayScans: todayScans.length, todayCost, monthCost: monthCost.toFixed(4), costPerScan },
   });
 }
