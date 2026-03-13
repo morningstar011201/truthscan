@@ -559,7 +559,7 @@ await supabase.from("profiles").update({
               {/* CINEMATIC HEADLINE */}
               <div style={{ textAlign: "center", marginBottom: 14, padding: "28px 20px", background: "linear-gradient(135deg,#0a0f1a,#0d1520)", border: "1px solid rgba(255,61,110,0.18)", borderRadius: 16, position: "relative", overflow: "hidden" }}>
                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,#ff3d6e,#00ffe0,#ffe600)" }} />
-                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 12 }}>ANALYSIS COMPLETE · {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 12 }}>ANALYSIS COMPLETE · {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
                 <div style={{ fontSize: "clamp(17px,4.5vw,24px)", fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>{result.cinematicHeadline}</div>
                 <div style={{ fontSize: 11, color: "#2a3040", letterSpacing: 1 }}>AI Pattern Analysis based on emotional response dynamics</div>
               </div>
@@ -580,7 +580,7 @@ await supabase.from("profiles").update({
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
                 {[{ label: "INTEREST LEVEL", score: result.interestScore, desc: result.interestDesc, color: "#00ffe0" }, { label: "LIE PROBABILITY", score: result.lieScore, desc: result.lieDesc, color: "#ff3d6e" }].map((c, i) => (
                   <div key={i} style={{ background: "#0d1520", border: `1px solid ${c.color}22`, borderRadius: 14, padding: "20px" }}>
-                    <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#445060", marginBottom: 10 }}>{c.label}</div>
+                    <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#8899aa", marginBottom: 10 }}>{c.label}</div>
                     <div style={{ fontSize: 52, fontWeight: 900, color: c.color, lineHeight: 1 }}>{c.score}%</div>
                     <Bar pct={c.score} color={c.color} />
                     <div style={{ fontSize: 12, color: "#556070", marginTop: 10, lineHeight: 1.6 }}>{c.desc}</div>
