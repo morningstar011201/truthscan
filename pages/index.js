@@ -713,7 +713,7 @@ await supabase.from("profiles").update({
             </div>
           )}
 
-          <div style={{ textAlign: "center", fontFamily: "monospace", fontSize: 9, color: "#445060", letterSpacing: 2, paddingTop: 24 }}>TRUTHSCAN AI · truthscan.in</div>
+          <div style={{ textAlign: "center", fontFamily: "monospace", fontSize: 9, color: "#8899aa", letterSpacing: 2, paddingTop: 24 }}>TRUTHSCAN AI · truthscan.in</div>
         </div>
       </div>
     </>
