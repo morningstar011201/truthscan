@@ -412,6 +412,7 @@ await supabase.from("profiles").update({
                     style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(0,255,224,0.2)", background: "rgba(0,255,224,0.06)", color: "#00ffe0", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                     📂 History
                   </button>
+                      <button onClick={() => window.location.href = "/pricing"} style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(0,255,224,0.2)", background: "rgba(0,255,224,0.06)", color: "#00ffe0", cursor: "pointer", fontSize: 11 }}>💳 Pricing</button>
                       <button onClick={() => window.location.href = "/profile"}
              style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(0,255,224,0.2)", background: "rgba(0,255,224,0.06)", color: "#00ffe0", cursor: "pointer", fontSize: 11 }}>
                      👤 Profile
