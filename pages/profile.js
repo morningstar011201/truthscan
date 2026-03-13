@@ -142,7 +142,10 @@ export default function ProfilePage() {
                 {(() => {
                   const today = new Date().toISOString().split("T")[0];
                   const isNewDay = profile?.last_scan_date !== today;
-                  return isNewDay ? 1 : Math.max(0, 1 - (profile?.daily_scans_used || 0));
+                 const LIMITS = { free: 1, daily: 10, basic: 100, standard: 250, pro: 750 };
+                const limit = LIMITS[profile?.plan] || 1;
+                const used = isNewDay ? 0 : (profile?.daily_scans_used || 0);
+                return Math.max(0, limit - used);
                 })()}
               </div>
               <div style={styles.statLabel}>SCANS LEFT</div>
