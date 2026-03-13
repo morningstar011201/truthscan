@@ -1,55 +1,32 @@
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+const PACKS = {
+  starter: 7,
+  popular: 80,
+  power: 200,
+};
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") return res.status(405).end();
 
-  const {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    planId,
-    userId,
-    planType,
-  } = req.body;
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, pack, userId } = req.body;
 
-  // Verify signature
-  const body = razorpay_order_id + "|" + razorpay_payment_id;
-  const expectedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    .update(body)
-    .digest("hex");
+  const sign = razorpay_order_id + "|" + razorpay_payment_id;
+  const expected = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET).update(sign).digest("hex");
 
-  if (expectedSignature !== razorpay_signature) {
-    return res.status(400).json({ success: false, error: "Invalid signature" });
-  }
+  if (expected !== razorpay_signature) return res.status(400).json({ error: "Invalid signature" });
 
-  // Calculate expiry
-  const now = new Date();
-  let expiresAt = null;
-  if (planType === "daily") {
-    expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +1 day
-  } else {
-    expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30 days
-  }
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-  // Update user plan in Supabase
-  const { error } = await supabaseAdmin
-    .from("profiles")
-    .update({
-      plan: planId,
-      plan_expires_at: expiresAt.toISOString(),
-      monthly_scans_used: 0,
-      updated_at: now.toISOString(),
-    })
-    .eq("id", userId);
+  const { data: profile } = await supabase.from("profiles").select("scan_credits").eq("id", userId).single();
+  const currentCredits = profile?.scan_credits || 0;
+  const addCredits = PACKS[pack] || 0;
 
-  if (error) return res.status(500).json({ success: false, error: error.message });
+  await supabase.from("profiles").update({
+    scan_credits: currentCredits + addCredits,
+    updated_at: new Date().toISOString()
+  }).eq("id", userId);
 
-  return res.status(200).json({ success: true });
+  res.json({ success: true, credits: currentCredits + addCredits });
 }
