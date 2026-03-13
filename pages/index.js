@@ -169,11 +169,26 @@ export default function TruthScan() {
     const isNewDay = profile?.last_scan_date !== today;
     const dailyUsed = isNewDay ? 0 : (profile?.daily_scans_used || 0);
     
-    if (profile?.plan === "free" && dailyUsed >= FREE_LIMIT) {
-      setErr("❌ Daily free analysis used! Come back tomorrow or upgrade.");
-      setStage("input");
-      return;
-    }
+   const PLAN_LIMITS = { free: 1, daily: 10, basic: 100, standard: 250, pro: 750 };
+const userPlan = profile?.plan || "free";
+const planLimit = PLAN_LIMITS[userPlan] || 1;
+const isDaily = userPlan === "free" || userPlan === "daily";
+
+if (userPlan !== "free" && profile?.plan_expires_at) {
+  const expired = new Date(profile.plan_expires_at) < new Date();
+  if (expired) {
+    setErr("❌ Your plan has expired! Please renew.");
+    setStage("input");
+    return;
+  }
+}
+
+const usageCount = isDaily ? dailyUsed : (profile?.monthly_scans_used || 0);
+if (usageCount >= planLimit) {
+  setErr(`❌ ${userPlan.toUpperCase()} plan limit reached (${planLimit} scans). Upgrade!`);
+  setStage("input");
+  return;
+}
       // Update usage count
       if (!user) {
         const localCount = parseInt(localStorage.getItem("ts_free_count") || "0");
@@ -202,12 +217,14 @@ export default function TruthScan() {
         // Update profile usage
         const today2 = new Date().toISOString().split("T")[0];
 const isNewDay2 = profile?.last_scan_date !== today2;
+const isDaily2 = userPlan === "free" || userPlan === "daily";
 await supabase.from("profiles").update({
   daily_scans_used: isNewDay2 ? 1 : (profile?.daily_scans_used || 0) + 1,
   last_scan_date: today2,
+  monthly_scans_used: isDaily2 ? (profile?.monthly_scans_used || 0) : (profile?.monthly_scans_used || 0) + 1,
   total_scans: (profile?.total_scans || 0) + 1,
   updated_at: new Date().toISOString()
-}).eq("id", user.id);
+}).eq("id", user.id);    
 
         fetchProfile(user.id);
       }
