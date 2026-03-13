@@ -404,7 +404,7 @@ await supabase.from("profiles").update({
 
           {/* TOP NAV */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0 0" }}>
-            <div style={{ fontFamily: "monospace", fontSize: 9, color: "#2a3040", letterSpacing: 2 }}>TRUTHSCAN AI</div>
+            <div style={{ fontFamily: "monospace", fontSize: 9, color: "#445060", letterSpacing: 2 }}>TRUTHSCAN AI</div>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {user ? (
                 <>
