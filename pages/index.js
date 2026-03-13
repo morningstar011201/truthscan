@@ -215,13 +215,13 @@ if (dailyUsed >= 1 && credits <= 0) {
         });
 
         // Update profile usage
-        const today2 = new Date().toISOString().split("T")[0];
+       const today2 = new Date().toISOString().split("T")[0];
 const isNewDay2 = profile?.last_scan_date !== today2;
-const isDaily2 = userPlan === "free" || userPlan === "daily";
+const useCredit = !isNewDay2 && (profile?.daily_scans_used || 0) >= 1;
 await supabase.from("profiles").update({
   daily_scans_used: isNewDay2 ? 1 : (profile?.daily_scans_used || 0) + 1,
   last_scan_date: today2,
-  monthly_scans_used: isDaily2 ? (profile?.monthly_scans_used || 0) : (profile?.monthly_scans_used || 0) + 1,
+  scan_credits: useCredit ? Math.max(0, (profile?.scan_credits || 0) - 1) : (profile?.scan_credits || 0),
   total_scans: (profile?.total_scans || 0) + 1,
   updated_at: new Date().toISOString()
 }).eq("id", user.id);    
