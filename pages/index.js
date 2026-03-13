@@ -472,10 +472,10 @@ const limit2 = LIMITS2[profile?.plan] || 1;
 const isDailyPlan2 = profile?.plan === "free" || profile?.plan === "daily";
 const left2 = isDailyPlan2 ? Math.max(0, limit2 - dailyUsed) : Math.max(0, limit2 - (profile?.monthly_scans_used || 0));
 const badgeText = profile?.plan === "free" ? (dailyUsed >= FREE_LIMIT ? "Daily scan used - Upgrade" : "1 free scan remaining") : (profile.plan + " plan - " + left2 + " scans left");
-return badgeText
-        </div>
-     )}
-          </div>
+return badgeText;
+    })()}
+  </div>
+)}
 
           {/* INPUT */}
           {stage === "input" && (
