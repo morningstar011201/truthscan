@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 
+const ADMIN_EMAIL = "mr.morningstar011201@gmail.com";
+
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [search, setSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
+  const [userDetailLoading, setUserDetailLoading] = useState(false);
+  const [actionMsg, setActionMsg] = useState("");
+  const [confirmPopup, setConfirmPopup] = useState(null);
   const [creditEmail, setCreditEmail] = useState("");
   const [creditAmount, setCreditAmount] = useState("");
-  const [creditMsg, setCreditMsg] = useState("");
-
-  const ADMIN_EMAIL = "mr.morningstar011201@gmail.com";
+  const [deductEmail, setDeductEmail] = useState("");
+  const [deductAmount, setDeductAmount] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -25,33 +32,37 @@ export default function Admin() {
 
   async function fetchStats(email) {
     setLoading(true);
-    const res = await fetch("/api/admin-stats", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
-    });
+    const res = await fetch("/api/admin-stats", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
     const data = await res.json();
     if (data.error) { setError(data.error); setLoading(false); return; }
     setStats(data);
     setLoading(false);
   }
 
-  async function addCredits() {
-    if (!creditEmail || !creditAmount) return;
-    const { data: profile } = await supabase.from("profiles").select("id, scan_credits").eq("email", creditEmail).single();
-    if (!profile) { setCreditMsg("❌ User not found!"); return; }
-    await supabase.from("profiles").update({ scan_credits: (profile.scan_credits || 0) + parseInt(creditAmount) }).eq("id", profile.id);
-    setCreditMsg("✅ Added " + creditAmount + " credits to " + creditEmail);
+  async function adminAction(action, payload) {
+    const res = await fetch("/api/admin-stats", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: user.email, action, payload }) });
+    const data = await res.json();
+    if (data.error) { setActionMsg("❌ " + data.error); return; }
+    setActionMsg("✅ Done!");
     fetchStats(user.email);
+    setTimeout(() => setActionMsg(""), 3000);
   }
 
-  const s = { 
+  async function openUserDetail(email) {
+    setUserDetailLoading(true);
+    setSelectedUser(email);
+    const res = await fetch("/api/admin-stats", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: user.email, action: "get_user", payload: { targetEmail: email } }) });
+    const data = await res.json();
+    setUserDetail(data);
+    setUserDetailLoading(false);
+  }
+
+  const s = {
     page: { minHeight: "100vh", background: "#080b10", color: "#dde2ea", fontFamily: "'Segoe UI', sans-serif", padding: "0 16px 60px" },
-    nav: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0", maxWidth: 1100, margin: "0 auto" },
-    wrap: { maxWidth: 1100, margin: "0 auto" },
-    title: { fontSize: 24, fontWeight: 900, color: "#fff", letterSpacing: 2 },
-    grid4: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12, marginBottom: 16 },
-    grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 12, marginBottom: 16 },
+    nav: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0", maxWidth: 1200, margin: "0 auto" },
+    wrap: { maxWidth: 1200, margin: "0 auto" },
+    grid4: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 16 },
+    grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12, marginBottom: 16 },
     card: { background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px" },
     label: { fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 8 },
     big: { fontSize: 32, fontWeight: 900, color: "#00ffe0" },
@@ -62,17 +73,139 @@ export default function Admin() {
     td: { fontSize: 12, color: "#dde2ea", padding: "10px 12px", borderBottom: "1px solid rgba(255,255,255,0.03)" },
     input: { background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "10px 14px", color: "#dde2ea", fontSize: 13, width: "100%" },
     btn: { padding: "10px 20px", borderRadius: 8, border: "2px solid rgba(0,255,224,0.4)", background: "rgba(0,255,224,0.08)", color: "#00ffe0", fontSize: 13, fontWeight: 700, cursor: "pointer" },
+    btnRed: { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,61,110,0.4)", background: "rgba(255,61,110,0.08)", color: "#ff3d6e", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnGreen: { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(0,232,90,0.4)", background: "rgba(0,232,90,0.08)", color: "#00e85a", fontSize: 12, fontWeight: 700, cursor: "pointer" },
   };
 
   if (loading) return <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ fontFamily: "monospace", color: "#00ffe0", fontSize: 14, letterSpacing: 3 }}>LOADING ADMIN...</div></div>;
   if (error) return <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ color: "#ff3d6e", fontSize: 18, fontWeight: 700 }}>{error}</div></div>;
 
-  const tabs = ["overview", "payments", "users", "scans", "controls"];
+  const filteredUsers = stats?.users?.all?.filter(u =>
+    u.email?.toLowerCase().includes(search.toLowerCase()) ||
+    u.full_name?.toLowerCase().includes(search.toLowerCase())
+  ) || [];
 
   return (
     <div style={s.page}>
+
+      {/* CONFIRM POPUP */}
+      {confirmPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "#0d1520", border: "1px solid rgba(255,61,110,0.3)", borderRadius: 16, padding: 32, maxWidth: 400, width: "100%" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 12 }}>{confirmPopup.title}</div>
+            <div style={{ fontSize: 13, color: "#8899aa", marginBottom: 24 }}>{confirmPopup.message}</div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => { confirmPopup.onConfirm(); setConfirmPopup(null); }} style={s.btnRed}>Confirm</button>
+              <button onClick={() => setConfirmPopup(null)} style={s.btn}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* USER DETAIL MODAL */}
+      {selectedUser && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", zIndex: 999, overflowY: "auto", padding: 16 }}>
+          <div style={{ maxWidth: 800, margin: "20px auto", background: "#0a0f1a", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 20, padding: 28 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24 }}>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>👤 User Detail</div>
+              <button onClick={() => { setSelectedUser(null); setUserDetail(null); }} style={{ background: "none", border: "none", color: "#8899aa", fontSize: 20, cursor: "pointer" }}>✕</button>
+            </div>
+
+            {userDetailLoading ? (
+              <div style={{ textAlign: "center", color: "#00ffe0", fontFamily: "monospace", padding: 40 }}>Loading...</div>
+            ) : userDetail?.profile ? (
+              <>
+                {/* Profile Info */}
+                <div style={{ ...s.card, marginBottom: 16 }}>
+                  <div style={s.label}>PROFILE INFO</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    {[
+                      { label: "Email", value: userDetail.profile.email },
+                      { label: "Full Name", value: userDetail.profile.full_name || "—" },
+                      { label: "Username", value: userDetail.profile.username || "—" },
+                      { label: "Date of Birth", value: userDetail.profile.dob || "—" },
+                      { label: "Phone", value: userDetail.profile.phone || "—" },
+                      { label: "Signup Date", value: new Date(userDetail.profile.created_at).toLocaleDateString("en-IN") },
+                      { label: "Total Scans", value: userDetail.profile.total_scans || 0 },
+                      { label: "Credits Left", value: userDetail.profile.scan_credits || 0 },
+                      { label: "Status", value: userDetail.profile.is_banned ? "🚫 BANNED" : "✅ Active" },
+                      { label: "Last Scan", value: userDetail.profile.last_scan_date || "Never" },
+                    ].map((item, i) => (
+                      <div key={i}>
+                        <div style={{ fontSize: 10, color: "#8899aa", fontFamily: "monospace", letterSpacing: 2 }}>{item.label}</div>
+                        <div style={{ fontSize: 14, color: "#dde2ea", fontWeight: 600, marginTop: 2 }}>{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Purchase History */}
+                <div style={{ ...s.card, marginBottom: 16 }}>
+                  <div style={s.label}>PURCHASE HISTORY ({userDetail.payments?.length || 0} payments)</div>
+                  {userDetail.payments?.length === 0 ? (
+                    <div style={{ color: "#8899aa", fontSize: 13 }}>No purchases yet</div>
+                  ) : (
+                    <table style={s.table}>
+                      <thead><tr>{["PACK", "AMOUNT", "CREDITS", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
+                      <tbody>
+                        {userDetail.payments?.map((p, i) => (
+                          <tr key={i}>
+                            <td style={{ ...s.td, color: "#00ffe0" }}>{p.pack}</td>
+                            <td style={{ ...s.td, color: "#ffe600" }}>₹{p.amount}</td>
+                            <td style={{ ...s.td, color: "#c060ff" }}>{p.credits}</td>
+                            <td style={{ ...s.td, color: "#8899aa" }}>{new Date(p.created_at).toLocaleDateString("en-IN")}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {/* Credit History */}
+                <div style={{ ...s.card, marginBottom: 16 }}>
+                  <div style={s.label}>CREDIT HISTORY</div>
+                  {userDetail.creditHistory?.length === 0 ? (
+                    <div style={{ color: "#8899aa", fontSize: 13 }}>No credit history</div>
+                  ) : (
+                    <table style={s.table}>
+                      <thead><tr>{["ACTION", "CREDITS", "NOTE", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
+                      <tbody>
+                        {userDetail.creditHistory?.map((c, i) => (
+                          <tr key={i}>
+                            <td style={{ ...s.td, color: c.action.includes("deduct") ? "#ff3d6e" : "#00e85a" }}>{c.action}</td>
+                            <td style={s.td}>{c.credits}</td>
+                            <td style={{ ...s.td, color: "#8899aa" }}>{c.note}</td>
+                            <td style={{ ...s.td, color: "#8899aa" }}>{new Date(c.created_at).toLocaleDateString("en-IN")}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {/* Admin Actions */}
+                <div style={s.card}>
+                  <div style={s.label}>ADMIN ACTIONS</div>
+                  <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <button onClick={() => setConfirmPopup({
+                      title: userDetail.profile.is_banned ? "Unban User?" : "Ban User?",
+                      message: `This will ${userDetail.profile.is_banned ? "unban" : "ban"} ${userDetail.profile.email}`,
+                      onConfirm: () => adminAction(userDetail.profile.is_banned ? "unban_user" : "ban_user", { targetEmail: userDetail.profile.email })
+                    })} style={userDetail.profile.is_banned ? s.btnGreen : s.btnRed}>
+                      {userDetail.profile.is_banned ? "✅ Unban User" : "🚫 Ban User"}
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div style={{ color: "#ff3d6e" }}>User not found</div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div style={s.nav}>
-        <div style={s.title}>⚡ TRUTHSCAN <span style={{ color: "#00ffe0" }}>ADMIN</span></div>
+        <div style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>⚡ TRUTHSCAN <span style={{ color: "#00ffe0" }}>ADMIN</span></div>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={() => fetchStats(user.email)} style={s.btn}>🔄 Refresh</button>
           <button onClick={() => window.location.href = "/"} style={{ ...s.btn, color: "#8899aa", borderColor: "rgba(255,255,255,0.1)" }}>← Back</button>
@@ -81,33 +214,29 @@ export default function Admin() {
 
       {/* TABS */}
       <div style={{ ...s.wrap, display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-        {tabs.map(t => <button key={t} onClick={() => setActiveTab(t)} style={s.tab(activeTab === t)}>{t.toUpperCase()}</button>)}
+        {["overview", "payments", "users", "scans", "controls"].map(t => (
+          <button key={t} onClick={() => setActiveTab(t)} style={s.tab(activeTab === t)}>{t.toUpperCase()}</button>
+        ))}
       </div>
 
       <div style={s.wrap}>
 
-        {/* OVERVIEW TAB */}
+        {/* OVERVIEW */}
         {activeTab === "overview" && (
           <>
-            {/* Revenue */}
-            <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: 3, color: "#8899aa", marginBottom: 10 }}>💰 REVENUE</div>
+            <div style={s.label}>💰 REVENUE</div>
             <div style={s.grid4}>
               {[
-                { label: "TOTAL REVENUE", value: "₹" + (stats.revenue.total || 0), sub: "All time" },
-                { label: "TODAY", value: "₹" + (stats.revenue.today || 0), sub: "Today" },
-                { label: "THIS MONTH", value: "₹" + (stats.revenue.month || 0), sub: "Last 30 days" },
-                { label: "ARPPU", value: "₹" + (stats.revenue.arppu || 0), sub: "Avg revenue per paying user" },
+                { label: "TOTAL REVENUE", value: "₹" + stats.revenue.total, sub: "All time", color: "#ffe600" },
+                { label: "TODAY", value: "₹" + stats.revenue.today, sub: "Today", color: "#ffe600" },
+                { label: "THIS MONTH", value: "₹" + stats.revenue.month, sub: "Last 30 days", color: "#ffe600" },
+                { label: "ARPPU", value: "₹" + stats.revenue.arppu, sub: "Avg per paying user", color: "#ffe600" },
               ].map((item, i) => (
-                <div key={i} style={s.card}>
-                  <div style={s.label}>{item.label}</div>
-                  <div style={{ ...s.big, color: "#ffe600" }}>{item.value}</div>
-                  <div style={s.sub}>{item.sub}</div>
-                </div>
+                <div key={i} style={s.card}><div style={s.label}>{item.label}</div><div style={{ ...s.big, color: item.color }}>{item.value}</div><div style={s.sub}>{item.sub}</div></div>
               ))}
             </div>
 
-            {/* Users */}
-            <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: 3, color: "#8899aa", marginBottom: 10, marginTop: 8 }}>👥 USERS</div>
+            <div style={{ ...s.label, marginTop: 8 }}>👥 USERS</div>
             <div style={s.grid4}>
               {[
                 { label: "TOTAL USERS", value: stats.users.total, color: "#00ffe0" },
@@ -115,15 +244,11 @@ export default function Admin() {
                 { label: "NEW THIS WEEK", value: stats.users.week, color: "#00ffe0" },
                 { label: "PAYING USERS", value: stats.users.paying, color: "#ffe600" },
               ].map((item, i) => (
-                <div key={i} style={s.card}>
-                  <div style={s.label}>{item.label}</div>
-                  <div style={{ ...s.big, color: item.color }}>{item.value}</div>
-                </div>
+                <div key={i} style={s.card}><div style={s.label}>{item.label}</div><div style={{ ...s.big, color: item.color }}>{item.value}</div></div>
               ))}
             </div>
 
-            {/* Scans */}
-            <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: 3, color: "#8899aa", marginBottom: 10, marginTop: 8 }}>⚡ SCANS</div>
+            <div style={{ ...s.label, marginTop: 8 }}>⚡ SCANS</div>
             <div style={s.grid4}>
               {[
                 { label: "TOTAL SCANS", value: stats.scans.total, color: "#c060ff" },
@@ -131,15 +256,26 @@ export default function Admin() {
                 { label: "YESTERDAY", value: stats.scans.yesterday, color: "#c060ff" },
                 { label: "TOTAL PAYMENTS", value: stats.payments.total, color: "#00e85a" },
               ].map((item, i) => (
-                <div key={i} style={s.card}>
-                  <div style={s.label}>{item.label}</div>
-                  <div style={{ ...s.big, color: item.color }}>{item.value}</div>
-                </div>
+                <div key={i} style={s.card}><div style={s.label}>{item.label}</div><div style={{ ...s.big, color: item.color }}>{item.value}</div></div>
               ))}
             </div>
 
-            {/* Pack Stats */}
-            <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: 3, color: "#8899aa", marginBottom: 10, marginTop: 8 }}>🛒 PACK SALES</div>
+            <div style={{ ...s.label, marginTop: 8 }}>📊 CONVERSION FUNNEL</div>
+            <div style={s.grid3}>
+              {[
+                { label: "TOTAL USERS", value: stats.conversion.total, color: "#00ffe0" },
+                { label: "USERS WHO SCANNED", value: stats.conversion.scanned, color: "#c060ff" },
+                { label: "USERS WHO PAID", value: stats.conversion.paid, color: "#ffe600" },
+              ].map((item, i) => (
+                <div key={i} style={s.card}><div style={s.label}>{item.label}</div><div style={{ ...s.big, color: item.color }}>{item.value}</div></div>
+              ))}
+            </div>
+            <div style={{ ...s.card, marginBottom: 16, textAlign: "center" }}>
+              <div style={s.label}>CONVERSION RATE (Free → Paid)</div>
+              <div style={{ fontSize: 48, fontWeight: 900, color: "#ffe600" }}>{stats.conversion.rate}%</div>
+            </div>
+
+            <div style={{ ...s.label, marginTop: 8 }}>🛒 PACK SALES</div>
             <div style={s.grid3}>
               {[
                 { name: "STARTER ₹10", pack: "starter", color: "#00ffe0" },
@@ -154,23 +290,18 @@ export default function Admin() {
               ))}
             </div>
 
-            {/* Credits */}
-            <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: 3, color: "#8899aa", marginBottom: 10, marginTop: 8 }}>💳 CREDIT ECONOMY</div>
+            <div style={{ ...s.label, marginTop: 8 }}>💳 CREDIT ECONOMY</div>
             <div style={s.grid3}>
               {[
                 { label: "TOTAL PURCHASED", value: stats.credits.purchased, color: "#00ffe0" },
                 { label: "TOTAL USED", value: stats.credits.used, color: "#ff3d6e" },
                 { label: "REMAINING (SYSTEM)", value: stats.credits.remaining, color: "#ffe600" },
               ].map((item, i) => (
-                <div key={i} style={s.card}>
-                  <div style={s.label}>{item.label}</div>
-                  <div style={{ ...s.big, color: item.color }}>{item.value}</div>
-                </div>
+                <div key={i} style={s.card}><div style={s.label}>{item.label}</div><div style={{ ...s.big, color: item.color }}>{item.value}</div></div>
               ))}
             </div>
 
-            {/* Scans Per Day Graph */}
-            <div style={{ fontFamily: "monospace", fontSize: 10, letterSpacing: 3, color: "#8899aa", marginBottom: 10, marginTop: 8 }}>📊 SCANS LAST 7 DAYS</div>
+            <div style={{ ...s.label, marginTop: 8 }}>📊 SCANS LAST 7 DAYS</div>
             <div style={s.card}>
               <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 120, padding: "10px 0" }}>
                 {stats.scans.perDay.map((d, i) => {
@@ -189,21 +320,17 @@ export default function Admin() {
           </>
         )}
 
-        {/* PAYMENTS TAB */}
+        {/* PAYMENTS */}
         {activeTab === "payments" && (
           <div style={s.card}>
-            <div style={s.label}>RECENT PAYMENTS</div>
+            <div style={s.label}>RECENT PAYMENTS ({stats.payments.total} total)</div>
             <table style={s.table}>
-              <thead>
-                <tr>
-                  {["EMAIL", "PACK", "AMOUNT", "CREDITS", "PAYMENT ID", "TIME"].map(h => <th key={h} style={s.th}>{h}</th>)}
-                </tr>
-              </thead>
+              <thead><tr>{["EMAIL", "PACK", "AMOUNT", "CREDITS", "PAYMENT ID", "TIME"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
               <tbody>
                 {stats.payments.recent.map((p, i) => (
-                  <tr key={i}>
-                    <td style={s.td}>{p.email}</td>
-                    <td style={{ ...s.td, color: "#00ffe0", fontFamily: "monospace" }}>{p.pack}</td>
+                  <tr key={i} onClick={() => openUserDetail(p.email)} style={{ cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.background = "rgba(0,255,224,0.03)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    <td style={{ ...s.td, color: "#00ffe0" }}>{p.email}</td>
+                    <td style={{ ...s.td, fontFamily: "monospace" }}>{p.pack}</td>
                     <td style={{ ...s.td, color: "#ffe600", fontWeight: 700 }}>₹{p.amount}</td>
                     <td style={{ ...s.td, color: "#c060ff" }}>{p.credits}</td>
                     <td style={{ ...s.td, color: "#8899aa", fontSize: 10 }}>{p.payment_id?.slice(0, 16)}...</td>
@@ -215,61 +342,84 @@ export default function Admin() {
           </div>
         )}
 
-        {/* USERS TAB */}
+        {/* USERS */}
         {activeTab === "users" && (
-          <div style={s.card}>
-            <div style={s.label}>TOP USERS BY SCANS</div>
-            <table style={s.table}>
-              <thead>
-                <tr>
-                  {["EMAIL", "TOTAL SCANS", "CREDITS LEFT", "LAST SCAN"].map(h => <th key={h} style={s.th}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {stats.topUsers.map((u, i) => (
-                  <tr key={i}>
-                    <td style={s.td}>{u.email}</td>
-                    <td style={{ ...s.td, color: "#c060ff", fontWeight: 700 }}>{u.total_scans}</td>
-                    <td style={{ ...s.td, color: "#00ffe0" }}>{u.scan_credits}</td>
-                    <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{u.last_scan_date || "Never"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* SCANS TAB */}
-        {activeTab === "scans" && (
           <>
+            <div style={{ marginBottom: 16 }}>
+              <input style={s.input} placeholder="🔍 Search by email or name..." value={search} onChange={e => setSearch(e.target.value)} />
+            </div>
             <div style={s.card}>
-              <div style={s.label}>SCANS PER DAY — LAST 7 DAYS</div>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 160, padding: "10px 0" }}>
-                {stats.scans.perDay.map((d, i) => {
-                  const max = Math.max(...stats.scans.perDay.map(x => x.count), 1);
-                  const h = Math.max((d.count / max) * 100, 4);
-                  return (
-                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                      <div style={{ fontSize: 12, color: "#00ffe0", fontFamily: "monospace", fontWeight: 700 }}>{d.count}</div>
-                      <div style={{ width: "100%", height: h + "%", background: "linear-gradient(180deg,#00ffe0,#00ffe044)", borderRadius: "4px 4px 0 0", minHeight: 4 }} />
-                      <div style={{ fontSize: 10, color: "#8899aa", fontFamily: "monospace" }}>{d.date.slice(5)}</div>
-                    </div>
-                  );
-                })}
-              </div>
+              <div style={s.label}>ALL USERS ({filteredUsers.length})</div>
+              <table style={s.table}>
+                <thead><tr>{["NAME", "EMAIL", "TOTAL SCANS", "CREDITS", "SIGNUP DATE", "STATUS", ""].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {filteredUsers.map((u, i) => (
+                    <tr key={i} onMouseEnter={e => e.currentTarget.style.background = "rgba(0,255,224,0.02)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                      <td style={s.td}>{u.full_name || "—"}</td>
+                      <td style={{ ...s.td, color: "#00ffe0" }}>{u.email}</td>
+                      <td style={{ ...s.td, color: "#c060ff", fontWeight: 700 }}>{u.total_scans || 0}</td>
+                      <td style={{ ...s.td, color: "#ffe600" }}>{u.scan_credits || 0}</td>
+                      <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{new Date(u.created_at).toLocaleDateString("en-IN")}</td>
+                      <td style={{ ...s.td, color: u.is_banned ? "#ff3d6e" : "#00e85a" }}>{u.is_banned ? "🚫 Banned" : "✅ Active"}</td>
+                      <td style={s.td}><button onClick={() => openUserDetail(u.email)} style={{ ...s.btn, padding: "5px 12px", fontSize: 11 }}>View</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </>
         )}
 
-        {/* CONTROLS TAB */}
-        {activeTab === "controls" && (
+        {/* SCANS */}
+        {activeTab === "scans" && (
           <div style={s.card}>
-            <div style={s.label}>⚙️ ADMIN CONTROLS — ADD CREDITS TO USER</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 400 }}>
-              <input style={s.input} placeholder="User email" value={creditEmail} onChange={e => setCreditEmail(e.target.value)} />
-              <input style={s.input} placeholder="Credits to add" type="number" value={creditAmount} onChange={e => setCreditAmount(e.target.value)} />
-              <button onClick={addCredits} style={s.btn}>⚡ ADD CREDITS</button>
-              {creditMsg && <div style={{ color: creditMsg.startsWith("✅") ? "#00e85a" : "#ff3d6e", fontFamily: "monospace", fontSize: 13 }}>{creditMsg}</div>}
+            <div style={s.label}>SCANS PER DAY — LAST 7 DAYS</div>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 160, padding: "10px 0" }}>
+              {stats.scans.perDay.map((d, i) => {
+                const max = Math.max(...stats.scans.perDay.map(x => x.count), 1);
+                const h = Math.max((d.count / max) * 100, 4);
+                return (
+                  <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 12, color: "#00ffe0", fontFamily: "monospace", fontWeight: 700 }}>{d.count}</div>
+                    <div style={{ width: "100%", height: h + "%", background: "linear-gradient(180deg,#00ffe0,#00ffe044)", borderRadius: "4px 4px 0 0", minHeight: 4 }} />
+                    <div style={{ fontSize: 10, color: "#8899aa", fontFamily: "monospace" }}>{d.date.slice(5)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* CONTROLS */}
+        {activeTab === "controls" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {actionMsg && <div style={{ padding: "12px 16px", background: actionMsg.startsWith("✅") ? "rgba(0,232,90,0.07)" : "rgba(255,61,110,0.07)", border: `1px solid ${actionMsg.startsWith("✅") ? "rgba(0,232,90,0.2)" : "rgba(255,61,110,0.2)"}`, borderRadius: 10, color: actionMsg.startsWith("✅") ? "#00e85a" : "#ff3d6e", fontFamily: "monospace", fontSize: 13 }}>{actionMsg}</div>}
+
+            <div style={s.card}>
+              <div style={s.label}>⚡ ADD CREDITS TO USER</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 400 }}>
+                <input style={s.input} placeholder="User email" value={creditEmail} onChange={e => setCreditEmail(e.target.value)} />
+                <input style={s.input} placeholder="Credits to add" type="number" value={creditAmount} onChange={e => setCreditAmount(e.target.value)} />
+                <button onClick={() => setConfirmPopup({ title: "Add Credits?", message: `Add ${creditAmount} credits to ${creditEmail}?`, onConfirm: () => adminAction("add_credits", { targetEmail: creditEmail, credits: creditAmount }) })} style={s.btn}>⚡ ADD CREDITS</button>
+              </div>
+            </div>
+
+            <div style={s.card}>
+              <div style={s.label}>➖ DEDUCT CREDITS FROM USER</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 400 }}>
+                <input style={s.input} placeholder="User email" value={deductEmail} onChange={e => setDeductEmail(e.target.value)} />
+                <input style={s.input} placeholder="Credits to deduct" type="number" value={deductAmount} onChange={e => setDeductAmount(e.target.value)} />
+                <button onClick={() => setConfirmPopup({ title: "Deduct Credits?", message: `Deduct ${deductAmount} credits from ${deductEmail}? This cannot be undone.`, onConfirm: () => adminAction("deduct_credits", { targetEmail: deductEmail, credits: deductAmount }) })} style={s.btnRed}>➖ DEDUCT CREDITS</button>
+              </div>
+            </div>
+
+            <div style={s.card}>
+              <div style={s.label}>🚫 BAN / UNBAN USER</div>
+              <div style={{ display: "flex", gap: 10, maxWidth: 400, flexWrap: "wrap" }}>
+                <input style={{ ...s.input, flex: 1 }} placeholder="User email" id="banEmail" />
+                <button onClick={() => { const e = document.getElementById("banEmail").value; setConfirmPopup({ title: "Ban User?", message: `Ban ${e}? They will lose access.`, onConfirm: () => adminAction("ban_user", { targetEmail: e }) }); }} style={s.btnRed}>🚫 BAN</button>
+                <button onClick={() => { const e = document.getElementById("banEmail").value; adminAction("unban_user", { targetEmail: e }); }} style={s.btnGreen}>✅ UNBAN</button>
+              </div>
             </div>
           </div>
         )}
