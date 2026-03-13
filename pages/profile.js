@@ -132,12 +132,6 @@ export default function ProfilePage() {
               <div style={styles.statLabel}>TOTAL SCANS</div>
             </div>
             <div style={styles.statBox}>
-              <div style={{ ...styles.statNum, color: profile?.plan === "free" ? "#ff3d6e" : "#00ffe0" }}>
-                {profile?.plan === "free" ? "FREE" : (profile?.plan || "FREE").toUpperCase()}
-              </div>
-              <div style={styles.statLabel}>CURRENT PLAN</div>
-            </div>
-            <div style={styles.statBox}>
               <div style={styles.statNum}>
                 {(() => {
                   const today = new Date().toISOString().split("T")[0];
