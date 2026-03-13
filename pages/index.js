@@ -471,7 +471,7 @@ await supabase.from("profiles").update({
         ? dailyUsed >= FREE_LIMIT
           ? "❌ Daily scan used — Upgrade or come back tomorrow"
           : `⚡ 1 free scan today remaining · ${profile.total_scans || 0} total`
-        : `✅ ${profile.plan} plan · ${profile.total_scans || 0} total scans`;
+        : `✅ ${profile.plan} plan · ${profile.daily_scans_used > 0 ? ({"daily":10,"basic":100,"standard":250,"pro":750}[profile.plan] || 1) - profile.daily_scans_used : ({"daily":10,"basic":100,"standard":250,"pro":750}[profile.plan] || 1)} scans left`;
     })()}
   </div>
 )}
