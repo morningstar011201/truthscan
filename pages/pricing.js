@@ -202,7 +202,7 @@ export default function PricingPage() {
                 {plan.popular && <div style={s.popularBadge}>POPULAR</div>}
                 <div style={{ fontSize: 11, letterSpacing: 3, color: plan.color, fontWeight: 900, marginBottom: 12 }}>{plan.name}</div>
                 <div style={s.price}>{plan.label}</div>
-                <div style={{ fontSize: 10, color: "#445060", letterSpacing: 1, marginBottom: 4 }}>{plan.period}</div>
+                <div style={{ fontSize: 10, color: "#8899aa", letterSpacing: 1, marginBottom: 4 }}>{plan.period}</div>
                 <div style={{ fontSize: 11, color: "#00ffe0", marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.05)" }}>{plan.analyses}</div>
                 <ul style={s.featureList}>
                   {plan.features.map((f, i) => (
@@ -237,7 +237,7 @@ export default function PricingPage() {
           </div>
         )}
 
-        <div style={{ textAlign: "center", marginTop: 32, fontSize: 10, color: "#2a3040", letterSpacing: 1 }}>
+        <div style={{ textAlign: "center", marginTop: 32, fontSize: 10, color: "#667788", letterSpacing: 1 }}>
           🔒 SECURED BY RAZORPAY · UPI · CARDS · NETBANKING
         </div>
       </div>
