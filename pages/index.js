@@ -561,7 +561,7 @@ await supabase.from("profiles").update({
                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,#ff3d6e,#00ffe0,#ffe600)" }} />
                 <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 12 }}>ANALYSIS COMPLETE · {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
                 <div style={{ fontSize: "clamp(17px,4.5vw,24px)", fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>{result.cinematicHeadline}</div>
-                <div style={{ fontSize: 11, color: "#2a3040", letterSpacing: 1 }}>AI Pattern Analysis based on emotional response dynamics</div>
+                <div style={{ fontSize: 11, color: "#8899aa", letterSpacing: 1 }}>AI Pattern Analysis based on emotional response dynamics</div>
               </div>
 
               {/* CONFIDENCE */}
@@ -569,7 +569,7 @@ await supabase.from("profiles").update({
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <div style={mono}>PSYCHOLOGICAL CONFIDENCE</div>
-                    <div style={{ fontSize: 12, color: "#2a3040" }}>Based on language patterns, emotional cues and behavioral signals</div>
+                    <div style={{ fontSize: 12, color: "#8899aa" }}>Based on language patterns, emotional cues and behavioral signals</div>
                   </div>
                   <div style={{ fontFamily: "monospace", fontSize: 28, fontWeight: 900, color: "#ffe600", flexShrink: 0, marginLeft: 16 }}>{result.confidenceScore}%</div>
                 </div>
@@ -706,7 +706,7 @@ await supabase.from("profiles").update({
              <button onClick={reset}
   onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,255,224,0.06)"; e.currentTarget.style.color = "#00ffe0"; }}
   onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#8899aa"; }}
-  style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", color: "#445060", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}>
+  style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", color: "#8899aa", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}>
   ⚡ New Truth Scan
 </button>
 
