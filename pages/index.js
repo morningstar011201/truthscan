@@ -697,7 +697,7 @@ await supabase.from("profiles").update({
               </button>
 
               {shared && (
-                <div style={{ textAlign: "center", fontSize: 12, color: "#445060", fontFamily: "monospace", marginBottom: 14, padding: "10px 16px", background: "rgba(0,255,224,0.03)", borderRadius: 8, border: "1px solid rgba(0,255,224,0.07)" }}>
+                <div style={{ textAlign: "center", fontSize: 12, color: "#8899aa", fontFamily: "monospace", marginBottom: 14, padding: "10px 16px", background: "rgba(0,255,224,0.03)", borderRadius: 8, border: "1px solid rgba(0,255,224,0.07)" }}>
                   💡 Share on Instagram Stories, WhatsApp, Twitter — anywhere!
                 </div>
               )}
@@ -705,7 +705,7 @@ await supabase.from("profiles").update({
               {/* ACTION BUTTONS */}
              <button onClick={reset}
   onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,255,224,0.06)"; e.currentTarget.style.color = "#00ffe0"; }}
-  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#445060"; }}
+  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#8899aa"; }}
   style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", color: "#445060", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}>
   ⚡ New Truth Scan
 </button>
