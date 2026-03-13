@@ -471,10 +471,16 @@ await supabase.from("profiles").update({
         ? dailyUsed >= FREE_LIMIT
           ? "❌ Daily scan used — Upgrade or come back tomorrow"
           : `⚡ 1 free scan today remaining · ${profile.total_scans || 0} total`
-        : `✅ ${profile.plan} plan · ${profile.total_scans || 0} total scans`;
-    })()}
-  </div>
-)}
+        : (() => {
+       const LIMITS = { free: 1, daily: 10, basic: 100, standard: 250, pro: 750 };
+       const limit = LIMITS[profile.plan] || 1;
+       const isDailyPlan = profile.plan === "free" || profile.plan === "daily";
+       const used = isNewDay ? 0 : (profile?.daily_scans_used || 0);
+       const left = isDailyPlan ? Math.max(0, limit - used) : Math.max(0, limit - (profile?.monthly_scans_used || 0));
+       return `✅ ${profile.plan} plan · ${left} scans left`;
+     })()}
+        </div>
+     )}
           </div>
 
           {/* INPUT */}
