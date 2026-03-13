@@ -434,7 +434,7 @@ await supabase.from("profiles").update({
           <div style={{ textAlign: "center", padding: "32px 0 28px", animation: "fadeUp 0.5s ease both" }}>
             <div style={{ display: "inline-block", fontFamily: "monospace", fontSize: 10, letterSpacing: 4, color: "#00ffe0", background: "rgba(0,255,224,0.06)", border: "1px solid rgba(0,255,224,0.18)", padding: "5px 14px", borderRadius: 3, marginBottom: 16 }}>⚡ AI-POWERED ANALYSIS</div>
             <div style={{ fontSize: "clamp(50px,11vw,82px)", fontWeight: 900, lineHeight: 0.9, color: "#fff", letterSpacing: 1, animation: "glow 3s ease infinite" }}>TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span></div>
-            <div style={{ fontSize: 11, color: "#8899aa", marginTop: 10, letterSpacing: 3 }}>DECODE HIDDEN INTENT IN ANY CHAT</div>
+            <div style={{ fontSize: 11, color: "#aabbcc", marginTop: 10, letterSpacing: 3 }}>DECODE HIDDEN INTENT IN ANY CHAT</div>
             <div style={{ fontSize: 11, color: "#8899aa", marginTop: 5, letterSpacing: 1 }}>AI Pattern Analysis based on emotional response dynamics</div>
 
             {/* Usage indicator */}
