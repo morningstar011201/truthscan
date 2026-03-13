@@ -162,7 +162,7 @@ export default function PricingPage() {
     backBtn: { background: "transparent", border: "1px solid rgba(0,255,224,0.2)", color: "#00ffe0", padding: "7px 16px", borderRadius: 8, cursor: "pointer", fontSize: 12, letterSpacing: 1 },
     container: { maxWidth: 960, margin: "0 auto", padding: "40px 20px" },
     title: { textAlign: "center", fontSize: "clamp(22px,4vw,32px)", fontWeight: 900, letterSpacing: 3, color: "#fff", marginBottom: 8 },
-    subtitle: { textAlign: "center", fontSize: 12, color: "#445060", letterSpacing: 2, marginBottom: 40 },
+    subtitle: { textAlign: "center", fontSize: 12, color: "#8899aa", letterSpacing: 2, marginBottom: 40 },
     grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 },
     popularBadge: { position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", background: "#a78bfa", color: "#fff", fontSize: 9, fontWeight: 900, letterSpacing: 2, padding: "3px 12px", borderRadius: 20, whiteSpace: "nowrap" },
     price: { fontSize: "clamp(24px,4vw,32px)", fontWeight: 900, color: "#fff", lineHeight: 1 },
