@@ -2,9 +2,9 @@ import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const PACKS = {
-  starter: 7,
-  popular: 80,
-  power: 200,
+  starter: { credits: 7, amount: 10 },
+  popular: { credits: 80, amount: 99 },
+  power: { credits: 200, amount: 199 },
 };
 
 export default async function handler(req, res) {
@@ -19,14 +19,28 @@ export default async function handler(req, res) {
 
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-  const { data: profile } = await supabase.from("profiles").select("scan_credits").eq("id", userId).single();
+  const { data: profile } = await supabase.from("profiles").select("scan_credits, email").eq("id", userId).single();
   const currentCredits = profile?.scan_credits || 0;
-  const addCredits = PACKS[pack] || 0;
+  const addCredits = PACKS[pack]?.credits || 0;
+  const amount = PACKS[pack]?.amount || 0;
 
+  // Add credits to wallet
   await supabase.from("profiles").update({
     scan_credits: currentCredits + addCredits,
     updated_at: new Date().toISOString()
   }).eq("id", userId);
+
+  // Log payment
+  await supabase.from("payments").insert({
+    user_id: userId,
+    email: profile?.email,
+    pack,
+    amount,
+    credits: addCredits,
+    payment_id: razorpay_payment_id,
+    order_id: razorpay_order_id,
+    status: "success"
+  });
 
   res.json({ success: true, credits: currentCredits + addCredits });
 }
