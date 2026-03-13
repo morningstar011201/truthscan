@@ -183,9 +183,9 @@ if (userPlan !== "free" && profile?.plan_expires_at) {
   }
 }
 
-const usageCount = isDaily ? dailyUsed : (profile?.monthly_scans_used || 0);
-if (usageCount >= planLimit) {
-  setErr(`❌ ${userPlan.toUpperCase()} plan limit reached (${planLimit} scans). Upgrade!`);
+const credits = profile?.scan_credits || 0;
+if (dailyUsed >= 1 && credits <= 0) {
+  setErr("❌ No scans left! Buy credits at /pricing or come back tomorrow for your free scan.");
   setStage("input");
   return;
 }
