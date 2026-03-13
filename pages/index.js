@@ -473,7 +473,7 @@ const isDailyPlan2 = profile?.plan === "free" || profile?.plan === "daily";
 const left2 = isDailyPlan2 ? Math.max(0, limit2 - dailyUsed) : Math.max(0, limit2 - (profile?.monthly_scans_used || 0));
 return profile?.plan === "free"
   ? dailyUsed >= FREE_LIMIT
-    ? "❌ Daily scan used — Upgrade or come back tomorrow"
+    ? "❌ Daily scan used - Upgrade or come back tomorrow"
     : `⚡ 1 free scan today remaining`
   : `✅ ${profile.plan} plan · ${left2} scans left`
         </div>
