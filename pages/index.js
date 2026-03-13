@@ -279,7 +279,7 @@ await supabase.from("profiles").update({
 
   const freeUsed = user ? (profile?.free_scans_used || 0) : parseInt(typeof window !== "undefined" ? localStorage.getItem("ts_free_count") || "0" : "0");
   const card = { background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px 22px", marginBottom: 12 };
-  const mono = { fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 10 };
+  const mono = { fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 10 };
 
   if (authLoading) return (
     <div style={{ minHeight: "100vh", background: "#080b10", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -319,11 +319,11 @@ await supabase.from("profiles").update({
           <div onClick={() => setShowAuth(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", animation: "overlayFade 0.2s ease", padding: 16 }}>
             <div onClick={e => e.stopPropagation()} style={{ background: "#0d1520", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 20, padding: "32px 28px", width: "100%", maxWidth: 400, position: "relative" }}>
               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,#ff3d6e,#00ffe0,#ffe600)", borderRadius: "20px 20px 0 0" }} />
-              <button onClick={() => setShowAuth(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#445060", fontSize: 20, cursor: "pointer" }}>✕</button>
+              <button onClick={() => setShowAuth(false)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#8899aa", fontSize: 20, cursor: "pointer" }}>✕</button>
 
               <div style={{ textAlign: "center", marginBottom: 24 }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span></div>
-                <div style={{ fontSize: 13, color: "#445060", marginTop: 6 }}>{authMode === "login" ? "Sign in to continue" : "Create your account"}</div>
+                <div style={{ fontSize: 13, color: "#8899aa", marginTop: 6 }}>{authMode === "login" ? "Sign in to continue" : "Create your account"}</div>
               </div>
 
               {authMsg && <div style={{ background: "rgba(0,255,100,0.07)", border: "1px solid rgba(0,255,100,0.2)", borderRadius: 8, padding: "10px 14px", color: "#00e85a", fontSize: 13, marginBottom: 16, textAlign: "center" }}>{authMsg}</div>}
@@ -417,7 +417,7 @@ await supabase.from("profiles").update({
                      👤 Profile
                   </button>
                   <button onClick={signOut}
-                    style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: "#445060", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                    style={{ padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: "#8899aa", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                     Sign Out
                   </button>
                 </>
@@ -434,7 +434,7 @@ await supabase.from("profiles").update({
           <div style={{ textAlign: "center", padding: "32px 0 28px", animation: "fadeUp 0.5s ease both" }}>
             <div style={{ display: "inline-block", fontFamily: "monospace", fontSize: 10, letterSpacing: 4, color: "#00ffe0", background: "rgba(0,255,224,0.06)", border: "1px solid rgba(0,255,224,0.18)", padding: "5px 14px", borderRadius: 3, marginBottom: 16 }}>⚡ AI-POWERED ANALYSIS</div>
             <div style={{ fontSize: "clamp(50px,11vw,82px)", fontWeight: 900, lineHeight: 0.9, color: "#fff", letterSpacing: 1, animation: "glow 3s ease infinite" }}>TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span></div>
-            <div style={{ fontSize: 11, color: "#445060", marginTop: 10, letterSpacing: 3 }}>DECODE HIDDEN INTENT IN ANY CHAT</div>
+            <div style={{ fontSize: 11, color: "#8899aa", marginTop: 10, letterSpacing: 3 }}>DECODE HIDDEN INTENT IN ANY CHAT</div>
             <div style={{ fontSize: 11, color: "#2a3040", marginTop: 5, letterSpacing: 1 }}>AI Pattern Analysis based on emotional response dynamics</div>
 
             {/* Usage indicator */}
@@ -465,7 +465,7 @@ await supabase.from("profiles").update({
               <div style={{ display: "flex", gap: 8, marginBottom: 14, background: "#0d1520", padding: 6, borderRadius: 12, border: "1px solid rgba(255,255,255,0.07)" }}>
                 {[{ id: "text", icon: "💬", label: "Paste Text" }, { id: "image", icon: "📸", label: "Upload Screenshot" }].map(tab => (
                   <button key={tab.id} onClick={() => { setInputMode(tab.id); setErr(""); }}
-                    style={{ flex: 1, padding: "11px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.2s", background: inputMode === tab.id ? "rgba(0,255,224,0.12)" : "transparent", color: inputMode === tab.id ? "#00ffe0" : "#445060", border: inputMode === tab.id ? "1px solid rgba(0,255,224,0.3)" : "1px solid transparent" }}>
+                    style={{ flex: 1, padding: "11px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.2s", background: inputMode === tab.id ? "rgba(0,255,224,0.12)" : "transparent", color: inputMode === tab.id ? "#00ffe0" : "#8899aa", border: inputMode === tab.id ? "1px solid rgba(0,255,224,0.3)" : "1px solid transparent" }}>
                     {tab.icon} {tab.label}
                   </button>
                 ))}
@@ -478,7 +478,7 @@ await supabase.from("profiles").update({
                   <textarea value={chat} onChange={e => setChat(e.target.value)} rows={8}
                     placeholder={"Paste any WhatsApp / Instagram / Telegram / SMS chat here...\n\nExample:\nRiya: hey you free tonight?\nMe: yeah why?\nRiya: no reason just asking"}
                     style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, padding: "14px 16px", color: "#dde2ea", fontFamily: "inherit", fontSize: 14, lineHeight: 1.8, resize: "vertical", transition: "border-color 0.2s" }} />
-                  <div style={{ fontFamily: "monospace", fontSize: 10, color: "#445060", textAlign: "right", marginTop: 6 }}>{chat.length} chars</div>
+                  <div style={{ fontFamily: "monospace", fontSize: 10, color: "#8899aa", textAlign: "right", marginTop: 6 }}>{chat.length} chars</div>
                 </div>
               )}
 
@@ -491,7 +491,7 @@ await supabase.from("profiles").update({
                       style={{ border: `2px dashed ${dragOver ? "#00ffe0" : "rgba(0,255,224,0.2)"}`, borderRadius: 12, padding: "48px 24px", textAlign: "center", cursor: "pointer", transition: "all 0.25s", background: dragOver ? "rgba(0,255,224,0.04)" : "rgba(0,0,0,0.2)" }}>
                       <div style={{ fontSize: 48, marginBottom: 16 }}>📸</div>
                       <div style={{ fontSize: 16, fontWeight: 700, color: "#00ffe0", marginBottom: 8 }}>Drop screenshot here</div>
-                      <div style={{ fontSize: 12, color: "#445060", marginBottom: 18 }}>or click to browse files</div>
+                      <div style={{ fontSize: 12, color: "#8899aa", marginBottom: 18 }}>or click to browse files</div>
                       <div style={{ display: "inline-block", padding: "9px 22px", background: "rgba(0,255,224,0.08)", border: "1px solid rgba(0,255,224,0.25)", borderRadius: 8, fontSize: 13, color: "#00ffe0", fontWeight: 600 }}>Choose Image</div>
                       <div style={{ fontSize: 11, color: "#2a3a4a", marginTop: 16 }}>Works with WhatsApp, Instagram, Telegram, iMessage, SMS</div>
                     </div>
