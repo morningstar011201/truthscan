@@ -770,7 +770,6 @@ await supabase.from("profiles").update({
               </button>
 
             </div>
-          )}
     </>
   );
 }
