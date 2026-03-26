@@ -578,130 +578,102 @@ await supabase.from("profiles").update({
           {stage === "results" && result && (
             <div style={{ animation: "fadeUp 0.4s ease both" }}>
 
-              {/* CINEMATIC HEADLINE */}
-              <div style={{ textAlign: "center", marginBottom: 14, padding: "28px 20px", background: "linear-gradient(135deg,#0a0f1a,#0d1520)", border: "1px solid rgba(255,61,110,0.18)", borderRadius: 16, position: "relative", overflow: "hidden" }}>
+              {/* HEADLINE + CONFIDENCE CHIP */}
+              <div style={{ textAlign: "center", marginBottom: 12, padding: "28px 20px 22px", background: "linear-gradient(135deg,#0a0f1a,#0d1520)", border: "1px solid rgba(255,61,110,0.18)", borderRadius: 16, position: "relative", overflow: "hidden" }}>
                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,#ff3d6e,#00ffe0,#ffe600)" }} />
-                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 12 }}>ANALYSIS COMPLETE · {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
-                <div style={{ fontSize: "clamp(17px,4.5vw,24px)", fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>{result.cinematicHeadline}</div>
-                <div style={{ fontSize: 11, color: "#8899aa", letterSpacing: 1 }}>AI Pattern Analysis based on emotional response dynamics</div>
-              </div>
-
-              {/* CONFIDENCE */}
-              <div style={{ ...card }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={mono}>PSYCHOLOGICAL CONFIDENCE</div>
-                    <div style={{ fontSize: 12, color: "#8899aa" }}>Based on language patterns, emotional cues and behavioral signals</div>
-                  </div>
-                  <div style={{ fontFamily: "monospace", fontSize: 28, fontWeight: 900, color: "#ffe600", flexShrink: 0, marginLeft: 16 }}>{result.confidenceScore}%</div>
+                <div style={{ position: "absolute", top: 14, right: 14, background: "rgba(255,230,0,0.1)", border: "1px solid rgba(255,230,0,0.3)", borderRadius: 20, padding: "4px 12px", fontFamily: "monospace", fontSize: 10, color: "#ffe600", fontWeight: 900 }}>
+                  AI Confidence: {result.confidenceScore}%
                 </div>
-                <GlowBar pct={result.confidenceScore} />
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 12 }}>ANALYSIS COMPLETE</div>
+                <div style={{ fontSize: "clamp(17px,4.5vw,24px)", fontWeight: 900, color: "#fff", lineHeight: 1.35, marginBottom: 10 }}>{result.cinematicHeadline}</div>
+                <div style={{ fontSize: 11, color: "#2a3040", letterSpacing: 1 }}>Based on {result.signalCount || 47} emotional pattern signals</div>
               </div>
 
-              {/* SCORE CARDS */}
+              {/* ATTRACTION + TRUST RISK */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
-                {[{ label: "INTEREST LEVEL", score: result.interestScore, desc: result.interestDesc, color: "#00ffe0" }, { label: "LIE PROBABILITY", score: result.lieScore, desc: result.lieDesc, color: "#ff3d6e" }].map((c, i) => (
+                {[
+                  { label: "🔥 Attraction Signal", score: result.interestScore, desc: result.interestDesc, color: "#00ffe0" },
+                  { label: "🚩 Trust Risk", score: result.lieScore, desc: result.lieDesc, color: "#ff3d6e" }
+                ].map((c, i) => (
                   <div key={i} style={{ background: "#0d1520", border: `1px solid ${c.color}22`, borderRadius: 14, padding: "20px" }}>
-                    <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 3, color: "#8899aa", marginBottom: 10 }}>{c.label}</div>
+                    <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 2, color: "#445060", marginBottom: 10 }}>{c.label}</div>
                     <div style={{ fontSize: 52, fontWeight: 900, color: c.color, lineHeight: 1 }}>{c.score}%</div>
                     <Bar pct={c.score} color={c.color} />
-                    <div style={{ fontSize: 12, color: "#aabbcc", marginTop: 10, lineHeight: 1.6 }}>{c.desc}</div>
+                    <div style={{ fontSize: 12, color: "#556070", marginTop: 10, lineHeight: 1.5 }}>{c.desc}</div>
                   </div>
                 ))}
               </div>
 
-              {/* FLAGS */}
-              <div style={card}>
-                <div style={mono}>FLAG ANALYSIS</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {result.greenFlags?.map((f, i) => <span key={i} style={{ padding: "7px 13px", borderRadius: 6, fontSize: 13, fontWeight: 600, background: "rgba(0,255,100,0.07)", border: "1px solid rgba(0,255,100,0.18)", color: "#00e85a" }}>✅ {f}</span>)}
-                  {result.redFlags?.map((f, i) => <span key={i} style={{ padding: "7px 13px", borderRadius: 6, fontSize: 13, fontWeight: 600, background: "rgba(255,61,110,0.07)", border: "1px solid rgba(255,61,110,0.18)", color: "#ff3d6e" }}>🚩 {f}</span>)}
+              {/* BRUTALITY METER */}
+              <div style={{ ...card, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 6 }}>AI BRUTALITY METER</div>
+                  <div style={{ fontSize: 11, color: "#8899aa" }}>Emotional Stability: {result.emotionalStabilityScore}%</div>
+                </div>
+                <div style={{ padding: "10px 20px", borderRadius: 20, fontWeight: 900, fontSize: 14, letterSpacing: 2,
+                  background: result.brutalityLevel === "EXTREME" ? "rgba(255,0,80,0.12)" : result.brutalityLevel === "HIGH" ? "rgba(255,61,110,0.10)" : result.brutalityLevel === "MEDIUM" ? "rgba(255,180,0,0.10)" : "rgba(0,255,224,0.08)",
+                  border: result.brutalityLevel === "EXTREME" ? "1px solid rgba(255,0,80,0.4)" : result.brutalityLevel === "HIGH" ? "1px solid rgba(255,61,110,0.3)" : result.brutalityLevel === "MEDIUM" ? "1px solid rgba(255,180,0,0.3)" : "1px solid rgba(0,255,224,0.2)",
+                  color: result.brutalityLevel === "EXTREME" ? "#ff0050" : result.brutalityLevel === "HIGH" ? "#ff3d6e" : result.brutalityLevel === "MEDIUM" ? "#ffb400" : "#00ffe0"
+                }}>
+                  {result.brutalityLevel}
                 </div>
               </div>
 
-              {/* EMOTIONAL INTENT */}
-              <div style={card}>
-                <div style={mono}>EMOTIONAL INTENT</div>
-                <div style={{ fontSize: 14, lineHeight: 1.9, fontStyle: "italic", borderLeft: "2px solid #00ffe0", paddingLeft: 16, color: "#b0bac8" }}>{result.emotionalIntent}</div>
-              </div>
-
-              {/* EMOTIONAL IMPACT */}
-              <div style={{ ...card, background: "linear-gradient(135deg,#0d1a1f,#0d1520)", border: "1px solid rgba(0,255,224,0.09)" }}>
-                <div style={mono}>EMOTIONAL IMPACT ON YOU</div>
-                <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                  <div style={{ fontSize: 28, flexShrink: 0 }}>🧠</div>
-                  <div style={{ fontSize: 14, lineHeight: 1.85, color: "#b0bac8" }}>{result.emotionalImpact}</div>
+              {/* LIKELY OUTCOME */}
+              <div style={{ ...card, background: "linear-gradient(135deg,#130d1c,#0d1520)", border: "1px solid rgba(160,0,255,0.15)", marginBottom: 12 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 10 }}>🔮 LIKELY OUTCOME</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#c060ff", lineHeight: 1.5 }}>{result.futurePrediction}</div>
+                <div style={{ marginTop: 12, display: "inline-block", padding: "5px 14px", background: "rgba(160,0,255,0.08)", border: "1px solid rgba(160,0,255,0.2)", borderRadius: 20, fontSize: 11, color: "#c060ff" }}>
+                  📍 {result.trajectoryLabel}
                 </div>
               </div>
 
-              {/* BEHAVIORAL OBSERVATIONS */}
-              <div style={card}>
-                <div style={mono}>BEHAVIORAL OBSERVATIONS</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-                  {result.behavioralObservations?.map((obs, i) => (
-                    <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 14px", background: "rgba(255,230,0,0.03)", border: "1px solid rgba(255,230,0,0.08)", borderRadius: 8 }}>
-                      <div style={{ color: "#ffe600", fontSize: 14, marginTop: 2, flexShrink: 0 }}>◈</div>
-                      <div style={{ fontSize: 13, color: "#c0cad8", lineHeight: 1.6 }}>{obs}</div>
-                    </div>
-                  ))}
-                </div>
+              {/* VERDICT */}
+              <div style={{ ...card, background: "rgba(0,255,224,0.03)", border: "1px solid rgba(0,255,224,0.15)", borderLeft: "3px solid #00ffe0", marginBottom: 12 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>🎯 VERDICT</div>
+                <div style={{ fontSize: 16, fontWeight: 900, color: "#fff", lineHeight: 1.5 }}>{result.verdict}</div>
               </div>
 
-              {/* RELATIONSHIP TRAJECTORY */}
-              <div style={{ ...card, background: "linear-gradient(135deg,#130d1c,#0d1520)", border: "1px solid rgba(160,0,255,0.12)" }}>
-                <div style={mono}>🔮 RELATIONSHIP TRAJECTORY</div>
-                <div style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 14 }}>
-                  <div style={{ fontSize: 28, flexShrink: 0 }}>🔮</div>
-                  <div style={{ fontSize: 14, lineHeight: 1.85, color: "#b0bac8", fontStyle: "italic" }}>{result.futurePrediction}</div>
-                </div>
-                <div style={{ display: "inline-block", padding: "7px 16px", background: "rgba(160,0,255,0.08)", border: "1px solid rgba(160,0,255,0.2)", borderRadius: 20, fontSize: 12, fontWeight: 700, color: "#c060ff" }}>
-                  📍 Trajectory: {result.trajectoryLabel}
-                </div>
-              </div>
-
-              {/* SHAREABLE CARD */}
-              <div ref={shareCardRef} style={{ background: "linear-gradient(160deg,#05080f,#080d18,#050a10)", padding: "32px 26px", borderRadius: 22, border: "1px solid rgba(0,255,224,0.08)", marginBottom: 14, position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(0,255,224,0.06),transparent 70%)", pointerEvents: "none" }} />
-                <div style={{ position: "absolute", bottom: -60, left: -60, width: 200, height: 200, background: "radial-gradient(circle,rgba(255,61,110,0.05),transparent 70%)", pointerEvents: "none" }} />
+              {/* SHARE CARD — HERO POSITION */}
+              <div ref={shareCardRef} style={{ background: "linear-gradient(160deg,#05080f,#080d18,#050a10)", padding: "28px 22px", borderRadius: 20, border: "1px solid rgba(0,255,224,0.08)", marginBottom: 10, position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: "radial-gradient(circle,rgba(0,255,224,0.06),transparent 70%)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", bottom: -60, left: -60, width: 180, height: 180, background: "radial-gradient(circle,rgba(255,61,110,0.05),transparent 70%)", pointerEvents: "none" }} />
                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,#ff3d6e,#00ffe0,#ffe600)" }} />
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 22 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 18 }}>
                   <div>
-                    <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span></div>
-                    <div style={{ fontFamily: "monospace", fontSize: 8, color: "#1a2a3a", letterSpacing: 2, marginTop: 3 }}>AI PSYCHOLOGICAL ANALYSIS</div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: "#fff", letterSpacing: 1 }}>TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span></div>
+                    <div style={{ fontFamily: "monospace", fontSize: 8, color: "#1a2a3a", letterSpacing: 2, marginTop: 2 }}>AI PSYCHOLOGICAL ANALYSIS</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontFamily: "monospace", fontSize: 10, color: "#ffe600", fontWeight: 900 }}>AI {result.confidenceScore}% CONFIDENCE</div>
-                    <div style={{ fontFamily: "monospace", fontSize: 8, color: "#1a2a3a", marginTop: 3 }}>{new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                    <div style={{ fontFamily: "monospace", fontSize: 8, color: "#1a2a3a", marginTop: 2 }}>{new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
                   </div>
                 </div>
 
-                <div style={{ textAlign: "center", padding: "18px 16px", background: "rgba(255,20,60,0.07)", border: "1px solid rgba(255,61,110,0.15)", borderRadius: 14, marginBottom: 18 }}>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#fff", lineHeight: 1.35 }}>{result.cinematicHeadline}</div>
+                <div style={{ textAlign: "center", padding: "16px", background: "rgba(255,20,60,0.07)", border: "1px solid rgba(255,61,110,0.15)", borderRadius: 12, marginBottom: 14 }}>
+                  <div style={{ fontSize: 17, fontWeight: 900, color: "#fff", lineHeight: 1.35 }}>{result.cinematicHeadline}</div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-                  <div style={{ background: "rgba(0,255,224,0.06)", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 14, padding: "18px 14px", textAlign: "center" }}>
-                    <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#1a3a3a", marginBottom: 6 }}>❤️ INTEREST</div>
-                    <div style={{ fontSize: 44, fontWeight: 900, color: "#00ffe0", lineHeight: 1 }}>{result.interestScore}%</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+                  <div style={{ background: "rgba(0,255,224,0.06)", border: "1px solid rgba(0,255,224,0.15)", borderRadius: 12, padding: "16px 14px", textAlign: "center" }}>
+                    <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 2, color: "#1a3a3a", marginBottom: 4 }}>🔥 ATTRACTION</div>
+                    <div style={{ fontSize: 40, fontWeight: 900, color: "#00ffe0", lineHeight: 1 }}>{result.interestScore}%</div>
                   </div>
-                  <div style={{ background: "rgba(255,61,110,0.06)", border: "1px solid rgba(255,61,110,0.15)", borderRadius: 14, padding: "18px 14px", textAlign: "center" }}>
-                    <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#3a1a1a", marginBottom: 6 }}>🚩 TRUST RISK</div>
-                    <div style={{ fontSize: 44, fontWeight: 900, color: "#ff3d6e", lineHeight: 1 }}>{result.lieScore}%</div>
-                  </div>
-                </div>
-
-                <div style={{ background: "rgba(160,0,255,0.07)", border: "1px solid rgba(160,0,255,0.15)", borderRadius: 12, padding: "14px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ fontSize: 22 }}>🔮</div>
-                  <div>
-                    <div style={{ fontFamily: "monospace", fontSize: 8, color: "#2a1a3a", letterSpacing: 2, marginBottom: 4 }}>OUTCOME PREDICTION</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#c060ff" }}>{result.trajectoryLabel}</div>
+                  <div style={{ background: "rgba(255,61,110,0.06)", border: "1px solid rgba(255,61,110,0.15)", borderRadius: 12, padding: "16px 14px", textAlign: "center" }}>
+                    <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 2, color: "#3a1a1a", marginBottom: 4 }}>🚩 TRUST RISK</div>
+                    <div style={{ fontSize: 40, fontWeight: 900, color: "#ff3d6e", lineHeight: 1 }}>{result.lieScore}%</div>
                   </div>
                 </div>
 
-                <div style={{ background: "rgba(0,255,224,0.04)", border: "1px solid rgba(0,255,224,0.12)", borderLeft: "3px solid #00ffe0", borderRadius: 12, padding: "14px 16px", marginBottom: 20 }}>
-                  <div style={{ fontFamily: "monospace", fontSize: 8, color: "#1a3a3a", letterSpacing: 2, marginBottom: 6 }}>🎯 VERDICT</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#e0f0ef", lineHeight: 1.6 }}>{result.verdict}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "rgba(160,0,255,0.07)", border: "1px solid rgba(160,0,255,0.15)", borderRadius: 10, marginBottom: 12 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 9, color: "#c060ff" }}>🔮 {result.trajectoryLabel}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: 9, color: result.brutalityLevel === "HIGH" || result.brutalityLevel === "EXTREME" ? "#ff3d6e" : "#ffe600" }}>⚡ {result.brutalityLevel} BRUTALITY</div>
+                </div>
+
+                <div style={{ background: "rgba(0,255,224,0.04)", border: "1px solid rgba(0,255,224,0.12)", borderLeft: "3px solid #00ffe0", borderRadius: 10, padding: "12px 14px", marginBottom: 16 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 8, color: "#1a3a3a", letterSpacing: 2, marginBottom: 4 }}>🎯 VERDICT</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#e0f0ef", lineHeight: 1.5 }}>{result.verdict}</div>
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -710,34 +682,99 @@ await supabase.from("profiles").update({
                 </div>
               </div>
 
-              {/* SHARE BUTTON */}
+              {/* SHARE BUTTON — HERO */}
               <button onClick={shareAsImage}
                 onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 0 40px rgba(0,255,224,0.3)"; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
-                style={{ width: "100%", padding: "18px", borderRadius: 12, border: "2px solid rgba(0,255,224,0.4)", background: "linear-gradient(135deg,rgba(0,255,224,0.15),rgba(0,255,224,0.05))", color: "#00ffe0", fontSize: 16, fontWeight: 900, cursor: "pointer", transition: "all 0.25s", letterSpacing: 2, marginBottom: 10 }}>
-                {sharing ? "⏳ Generating Image..." : shared ? "✅ Saved! Now Share It Anywhere" : "📤 SAVE & SHARE RESULT IMAGE"}
+                style={{ width: "100%", padding: "18px", borderRadius: 12, border: "2px solid rgba(0,255,224,0.4)", background: "linear-gradient(135deg,rgba(0,255,224,0.15),rgba(0,255,224,0.05))", color: "#00ffe0", fontSize: 16, fontWeight: 900, cursor: "pointer", transition: "all 0.25s", letterSpacing: 2, marginBottom: 12 }}>
+                {sharing ? "⏳ Generating Image..." : shared ? "✅ Saved! Share Anywhere" : "🔥 SHARE RESULT"}
               </button>
 
-              {shared && (
-                <div style={{ textAlign: "center", fontSize: 12, color: "#8899aa", fontFamily: "monospace", marginBottom: 14, padding: "10px 16px", background: "rgba(0,255,224,0.03)", borderRadius: 8, border: "1px solid rgba(0,255,224,0.07)" }}>
-                  💡 Share on Instagram Stories, WhatsApp, Twitter — anywhere!
+              {/* FLAGS */}
+              <div style={{ ...card, marginBottom: 12 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 12 }}>SIGNAL FLAGS</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {result.greenFlags?.map((f, i) => <span key={i} style={{ padding: "9px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600, background: "rgba(0,255,100,0.07)", border: "1px solid rgba(0,255,100,0.18)", color: "#00e85a" }}>✅ {f}</span>)}
+                  {result.redFlags?.map((f, i) => <span key={i} style={{ padding: "9px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600, background: "rgba(255,61,110,0.07)", border: "1px solid rgba(255,61,110,0.18)", color: "#ff3d6e" }}>🚩 {f}</span>)}
                 </div>
-              )}
+              </div>
 
-              {/* ACTION BUTTONS */}
-             <button onClick={reset}
-  onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,255,224,0.06)"; e.currentTarget.style.color = "#00ffe0"; }}
-  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#8899aa"; }}
-  style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", color: "#8899aa", fontSize: 14, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}>
-  ⚡ New Truth Scan
-</button>
+              {/* ——— DEEP ZONE ——— */}
+              <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#2a3040", textAlign: "center", marginBottom: 12, marginTop: 4 }}>— DEEP ANALYSIS —</div>
+
+              {/* EMOTIONAL INTENT BULLETS */}
+              <div style={{ ...card, marginBottom: 12 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 12 }}>🧠 EMOTIONAL INTENT DETECTED</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {(result.emotionalIntentBullets || [result.emotionalIntent]).map((bullet, i) => (
+                    <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 14px", background: "rgba(0,255,224,0.03)", border: "1px solid rgba(0,255,224,0.08)", borderRadius: 8 }}>
+                      <div style={{ color: "#00ffe0", fontSize: 12, marginTop: 1, flexShrink: 0 }}>▸</div>
+                      <div style={{ fontSize: 13, color: "#b0bac8", lineHeight: 1.5 }}>{bullet}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* IMPACT ON YOU */}
+              <div style={{ ...card, background: "linear-gradient(135deg,#0d1a1f,#0d1520)", border: "1px solid rgba(0,255,224,0.09)", marginBottom: 12 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 10 }}>💔 IMPACT ON YOU</div>
+                <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                  <div style={{ fontSize: 24, flexShrink: 0 }}>🧠</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#dde2ea", lineHeight: 1.6 }}>{result.emotionalImpact}</div>
+                </div>
+              </div>
+
+              {/* BEHAVIORAL OBSERVATIONS — COLLAPSIBLE */}
+              {(() => {
+                const [open, setOpen] = window.__bObs || [false, null];
+                if (!window.__bObs) window.__bObs = [false, null];
+                return (
+                  <div style={{ ...card, marginBottom: 12 }}>
+                    <div onClick={() => { window.__bObs = [!window.__bObs[0], null]; const el = document.getElementById("bobs"); if (el) el.style.display = window.__bObs[0] ? "flex" : "none"; }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                      <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060" }}>BEHAVIOURAL OBSERVATIONS</div>
+                      <div style={{ color: "#445060", fontSize: 12 }}>▼ tap to expand</div>
+                    </div>
+                    <div id="bobs" style={{ display: "none", flexDirection: "column", gap: 8, marginTop: 12 }}>
+                      {result.behavioralObservations?.map((obs, i) => (
+                        <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 14px", background: "rgba(255,230,0,0.03)", border: "1px solid rgba(255,230,0,0.08)", borderRadius: 8 }}>
+                          <div style={{ color: "#ffe600", fontSize: 14, marginTop: 2, flexShrink: 0 }}>◈</div>
+                          <div style={{ fontSize: 13, color: "#c0cad8", lineHeight: 1.6 }}>{obs}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* WHAT TO DO NEXT */}
+              <div style={{ ...card, background: "rgba(0,255,100,0.03)", border: "1px solid rgba(0,255,100,0.1)", marginBottom: 12 }}>
+                <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 12 }}>⚡ WHAT YOU SHOULD DO NEXT</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {[
+                    { label: "🔄 Scan Another Chat", action: reset },
+                    { label: "🔍 Decode Another Conversation", action: reset },
+                    { label: "💾 Save This Result", action: shareAsImage },
+                  ].map((btn, i) => (
+                    <button key={i} onClick={btn.action}
+                      onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,255,224,0.08)"; e.currentTarget.style.color = "#00ffe0"; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.color = "#8899aa"; }}
+                      style={{ width: "100%", padding: "12px 16px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)", color: "#8899aa", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "left" }}>
+                      {btn.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* BOTTOM CTA */}
+              <button onClick={reset}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 30px rgba(255,61,110,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "none"; }}
+                style={{ width: "100%", padding: "18px", borderRadius: 12, border: "2px solid rgba(255,61,110,0.3)", background: "linear-gradient(135deg,rgba(255,61,110,0.10),rgba(255,61,110,0.04))", color: "#ff3d6e", fontSize: 15, fontWeight: 900, cursor: "pointer", transition: "all 0.25s", letterSpacing: 2, marginBottom: 8 }}>
+                🔥 Decode Another Chat
+              </button>
 
             </div>
           )}
-
-          <div style={{ textAlign: "center", fontFamily: "monospace", fontSize: 9, color: "#8899aa", letterSpacing: 2, paddingTop: 24 }}>TRUTHSCAN AI · truthscan.in</div>
-        </div>
-      </div>
     </>
   );
 }
