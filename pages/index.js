@@ -2,6 +2,19 @@ import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import { supabase } from "../lib/supabase";
 
+<Head>
+  <title>TruthScan AI — Decode Hidden Intent In Any Chat</title>
+  <meta name="description" content="AI-powered chat analyzer. Find out if they like you, detect mixed signals, lies and emotional intent. Works with WhatsApp, Instagram, Telegram chats." />
+  <meta name="keywords" content="chat analyzer, relationship AI, does he like me, decode messages, WhatsApp analyzer, truth scanner" />
+  <meta property="og:title" content="TruthScan AI — Decode Hidden Intent In Any Chat" />
+  <meta property="og:description" content="Paste any chat. AI tells you exactly what they mean. Brutal. Instant. Shareable." />
+  <meta property="og:url" content="https://truthscan.fun" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="canonical" href="https://truthscan.fun" />
+</Head>
+
 const SCAN_STEPS = [
   { label: "Mapping emotional tone", pct: 34 },
   { label: "Detecting response inconsistency", pct: 62 },
