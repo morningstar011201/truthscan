@@ -2,19 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import { supabase } from "../lib/supabase";
 
-<Head>
-  <title>TruthScan AI — Decode Hidden Intent In Any Chat</title>
-  <meta name="description" content="AI-powered chat analyzer. Find out if they like you, detect mixed signals, lies and emotional intent. Works with WhatsApp, Instagram, Telegram chats." />
-  <meta name="keywords" content="chat analyzer, relationship AI, does he like me, decode messages, WhatsApp analyzer, truth scanner" />
-  <meta property="og:title" content="TruthScan AI — Decode Hidden Intent In Any Chat" />
-  <meta property="og:description" content="Paste any chat. AI tells you exactly what they mean. Brutal. Instant. Shareable." />
-  <meta property="og:url" content="https://truthscan.fun" />
-  <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="canonical" href="https://truthscan.fun" />
-</Head>
-
 const SCAN_STEPS = [
   { label: "Mapping emotional tone", pct: 34 },
   { label: "Detecting response inconsistency", pct: 62 },
@@ -319,12 +306,22 @@ await supabase.from("profiles").update({
 
   return (
     <>
-      <Head>
-        <title>TruthScan AI — Chat Truth Analyzer</title>
-        <meta name="description" content="AI-powered chat analyzer. Detect emotional intent, lie probability, manipulation patterns." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+<Head>
+  <title>TruthScan AI — Decode Hidden Intent In Any Chat</title>
+  <meta name="description" content="AI-powered chat analyzer. Find out if they like you, detect mixed signals, lies and emotional intent. Works with WhatsApp, Instagram, Telegram chats." />
+  <meta name="keywords" content="chat analyzer, relationship AI, does he like me, decode messages, WhatsApp analyzer, truth scanner" />
+  <meta property="og:title" content="TruthScan AI — Decode Hidden Intent In Any Chat" />
+  <meta property="og:description" content="Paste any chat. AI tells you exactly what they mean. Brutal. Instant. Shareable." />
+  <meta property="og:url" content="https://truthscan.fun" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="canonical" href="https://truthscan.fun" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512" />
+  <link rel="apple-touch-icon" href="/favicon-512.png" />
+  <meta name="theme-color" content="#00ffe0" />
+</Head>
 
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -686,7 +683,7 @@ await supabase.from("profiles").update({
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontFamily: "monospace", fontSize: 9, color: "#0d1e2e", letterSpacing: 2, fontWeight: 700 }}>truthscan.in</div>
+                  <div style={{ fontFamily: "monospace", fontSize: 9, color: "#0d1e2e", letterSpacing: 2, fontWeight: 700 }}>truthscan.fun</div>
                   <div style={{ fontFamily: "monospace", fontSize: 9, color: "#0d1e2e", letterSpacing: 1 }}>⚡ DECODE THE TRUTH</div>
                 </div>
               </div>
