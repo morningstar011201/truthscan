@@ -12,6 +12,11 @@ export async function getServerSideProps({ res }) {
     <loc>https://truthscan.fun/pricing</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url> 
+  <url>
+    <loc>https://truthscan.fun/blog/why-she-replies-late</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>`;
   res.setHeader("Content-Type", "text/xml");
