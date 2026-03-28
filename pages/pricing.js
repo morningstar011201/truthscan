@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Head from "next/head";
 import { supabase } from "../lib/supabase";
 
 const PACKS = [
@@ -82,6 +83,16 @@ export default function Pricing() {
   };
 
   return (
+    <>
+    <Head>
+      <title>Buy Scan Credits — TruthScan AI</title>
+      <meta name="description" content="Buy AI chat analysis credits. Decode hidden intent in any WhatsApp, Instagram or Telegram chat. Starting at just ₹10." />
+      <meta property="og:title" content="Buy Scan Credits — TruthScan AI" />
+      <meta property="og:url" content="https://truthscan.fun/pricing" />
+      <link rel="canonical" href="https://truthscan.fun/pricing" />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
+      <meta name="theme-color" content="#00ffe0" />
+    </Head>
     <div style={styles.page}>
       <div style={styles.nav}>
         <div style={styles.logo}>TRUTH<span style={{ color: "#00ffe0" }}>SCAN</span></div>
@@ -134,5 +145,6 @@ export default function Pricing() {
         🔒 SECURED BY RAZORPAY · UPI · CARDS · NETBANKING
       </div>
     </div>
-  );
-}
+  </>
+    );
+  }
