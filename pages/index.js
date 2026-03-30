@@ -782,7 +782,22 @@ await supabase.from("profiles").update({
             </div>
           )}
             
-         <div style={{ textAlign: "center", fontFamily: "monospace", fontSize: 9, color: "#8899aa", letterSpacing: 2, paddingTop: 24 }}>TRUTHSCAN AI · truthscan.in</div>
+         <div style={{ textAlign: "center", paddingTop: 32, paddingBottom: 16 }}>
+           <div style={{ fontFamily: "monospace", fontSize: 9, color: "#8899aa", letterSpacing: 2, marginBottom: 16 }}>TRUTHSCAN AI · truthscan.fun</div>
+           <div style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
+            {[
+              { label: "Blog", href: "/blog" },
+              { label: "Privacy Policy", href: "/privacy" },
+              { label: "Terms of Service", href: "/terms" },
+            ].map((link, i) => (
+              <a key={i} href={link.href} style={{ fontFamily: "monospace", fontSize: 10, color: "#445060", textDecoration: "none", letterSpacing: 1 }}
+                onMouseEnter={e => e.target.style.color = "#00ffe0"}
+                onMouseLeave={e => e.target.style.color = "#445060"}>
+                {link.label}
+             </a>
+           ))}
+         </div>
+       </div>
         </div>
       </div>
     </>
