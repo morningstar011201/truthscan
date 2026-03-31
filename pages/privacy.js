@@ -79,7 +79,7 @@ export default function Privacy() {
           <div style={s.divider} />
 
           <h2 style={s.h2}>7. Your Rights</h2>
-          <p style={s.p}>You can delete your account and all associated data at any time by contacting us. You can also request to see what data we hold about you. To exercise these rights, email us at <span style={{ color: "#00ffe0" }}>support@truthscan.fun</span>.</p>
+          <p style={s.p}>You can delete your account and all associated data at any time by contacting us. You can also request to see what data we hold about you. To exercise these rights, email us at <span style={{ color: "#00ffe0" }}>truthscan.fun@gmail.com</span>.</p>
 
           <div style={s.divider} />
 
@@ -94,7 +94,7 @@ export default function Privacy() {
           <div style={s.divider} />
 
           <h2 style={s.h2}>10. Contact</h2>
-          <p style={s.p}>For any privacy-related questions, contact us at <span style={{ color: "#00ffe0" }}>support@truthscan.fun</span>.</p>
+          <p style={s.p}>For any privacy-related questions, contact us at <span style={{ color: "#00ffe0" }}>truthscan.fun@gmail.com</span>.</p>
 
           <div style={s.footer}>TRUTHSCAN AI · truthscan.fun · INDIA</div>
         </div>
