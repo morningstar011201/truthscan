@@ -308,7 +308,7 @@ await supabase.from("profiles").update({
     <>
 <Head>
   <title>TruthScan AI — Decode Hidden Intent In Any Chat</title>
-  <meta name="description" content="AI-powered chat analyzer. Find out if they like you, detect mixed signals, lies and emotional intent. Works with WhatsApp, Instagram, Telegram chats." />
+  <meta name="description" content="Paste any chat. AI tells you in seconds if they like you, are lying, or losing interest. Try 1 free scan daily." />
   <meta name="keywords" content="chat analyzer, relationship AI, does he like me, decode messages, WhatsApp analyzer, truth scanner" />
   <meta property="og:title" content="TruthScan AI — Decode Hidden Intent In Any Chat" />
   <meta property="og:description" content="Paste any chat. AI tells you exactly what they mean. Brutal. Instant. Shareable." />
