@@ -106,7 +106,7 @@ export default function Terms() {
           <div style={s.divider} />
 
           <h2 style={s.h2}>12. Contact</h2>
-          <p style={s.p}>For any questions about these terms, contact us at <span style={{ color: "#00ffe0" }}>support@truthscan.fun</span>.</p>
+          <p style={s.p}>For any questions about these terms, contact us at <span style={{ color: "#00ffe0" }}>truthscan.fun@gmail.com</span>.</p>
 
           <div style={s.footer}>TRUTHSCAN AI · truthscan.fun · INDIA</div>
         </div>
