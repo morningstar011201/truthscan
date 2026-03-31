@@ -14,6 +14,16 @@ export async function getServerSideProps({ res }) {
     <priority>0.8</priority>
   </url> 
   <url>
+    <loc>https://www.truthscan.fun/privacy</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url> 
+  <url>
+    <loc>https://www.truthscan.fun/terms</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url> 
+  <url>
     <loc>https://truthscan.fun/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
