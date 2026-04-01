@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block private pages
+Disallow: /admin
+Disallow: /profile
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://truthscan.fun/sitemap.xml
