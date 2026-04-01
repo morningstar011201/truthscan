@@ -33,6 +33,11 @@ export async function getServerSideProps({ res }) {
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://truthscan.fun/blog/mixed-signals-over-text</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>`;
   res.setHeader("Content-Type", "text/xml");
   res.write(sitemap);
