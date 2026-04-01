@@ -8,6 +8,13 @@ const posts = [
     tag: "💬 RELATIONSHIPS",
     readTime: "5 min read",
   },
+  {
+  slug: "mixed-signals-over-text",
+  title: "Mixed Signals Over Text — What They Actually Mean",
+  desc: "They text all day then go cold. They flirt then act distant. Here's what mixed signals over text actually mean.",
+  tag: "💬 RELATIONSHIPS",
+  readTime: "6 min read",
+  },
 ];
 
 export default function Blog() {
