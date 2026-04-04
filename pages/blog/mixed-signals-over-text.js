@@ -32,10 +32,10 @@ export default function MixedSignalsOverText() {
         <meta name="keywords" content="mixed signals over text, mixed signals texting, what do mixed signals mean, mixed signals from a guy, mixed signals from a girl" />
         <meta property="og:title" content="Mixed Signals Over Text — What They Actually Mean" />
         <meta property="og:description" content="They text you all day then go cold. They flirt then act distant. Here's the truth about mixed signals." />
-        <meta property="og:url" content="https://truthscan.fun/blog/mixed-signals-over-text" />
+        <meta property="og:url" content="https://www.truthscan.fun/blog/mixed-signals-over-text" />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
-        <link rel="canonical" href="https://truthscan.fun/blog/mixed-signals-over-text" />
+        <link rel="canonical" href="https://www.truthscan.fun/blog/mixed-signals-over-text" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="theme-color" content="#00ffe0" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -44,7 +44,7 @@ export default function MixedSignalsOverText() {
           "headline": "Mixed Signals Over Text — What They Actually Mean",
           "description": "They text you all day then go cold. Here's what mixed signals over text actually mean.",
           "url": "https://truthscan.fun/blog/mixed-signals-over-text",
-          "publisher": { "@type": "Organization", "name": "TruthScan AI", "url": "https://truthscan.fun" },
+          "publisher": { "@type": "Organization", "name": "TruthScan AI", "url": "https://www.truthscan.fun" },
           "datePublished": "2025-04-01",
         })}} />
       </Head>
