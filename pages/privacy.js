@@ -21,7 +21,7 @@ export default function Privacy() {
       <Head>
         <title>Privacy Policy — TruthScan AI</title>
         <meta name="description" content="Privacy Policy for TruthScan AI. Learn how we collect, use and protect your data." />
-        <link rel="canonical" href="https://truthscan.fun/privacy" />
+        <link rel="canonical" href="https://www.truthscan.fun/privacy" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="robots" content="noindex" />
         <meta name="theme-color" content="#00ffe0" />
