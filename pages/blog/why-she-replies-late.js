@@ -136,10 +136,10 @@ export default function WhyShereRepliesLate() {
         <meta name="keywords" content="why she replies late, she takes long to reply, delayed replies meaning, she replies hours later, does she like me texting" />
         <meta property="og:title" content="Why She Replies Late — What It Actually Means" />
         <meta property="og:description" content="She replies late but you know she's online. Here's what it actually means." />
-        <meta property="og:url" content="https://truthscan.fun/blog/why-she-replies-late" />
+        <meta property="og:url" content="https://www.truthscan.fun/blog/why-she-replies-late" />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
-        <link rel="canonical" href="https://truthscan.fun/blog/why-she-replies-late" />
+        <link rel="canonical" href="https://www.truthscan.fun/blog/why-she-replies-late" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="theme-color" content="#00ffe0" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -147,8 +147,8 @@ export default function WhyShereRepliesLate() {
           "@type": "BlogPosting",
           "headline": "Why She Replies Late — What It Actually Means",
           "description": "She replies late but you know she's online. Here's what it actually means.",
-          "url": "https://truthscan.fun/blog/why-she-replies-late",
-          "publisher": { "@type": "Organization", "name": "TruthScan AI", "url": "https://truthscan.fun" },
+          "url": "https://www.truthscan.fun/blog/why-she-replies-late",
+          "publisher": { "@type": "Organization", "name": "TruthScan AI", "url": "https://www.truthscan.fun" },
           "datePublished": "2025-03-28",
         })}} />
       </Head>
