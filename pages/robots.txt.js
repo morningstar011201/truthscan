@@ -9,7 +9,7 @@ Disallow: /admin
 Disallow: /profile
 Disallow: /api/
 
-Sitemap: https://truthscan.fun/sitemap.xml`);
+Sitemap: https://www.truthscan.fun/sitemap.xml`);
   res.end();
   return { props: {} };
 }
