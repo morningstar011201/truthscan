@@ -21,7 +21,7 @@ export default function Terms() {
       <Head>
         <title>Terms of Service — TruthScan AI</title>
         <meta name="description" content="Terms of Service for TruthScan AI. Rules and conditions for using our chat analysis service." />
-        <link rel="canonical" href="https://truthscan.fun/terms" />
+        <link rel="canonical" href="https://www.truthscan.fun/terms" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="robots" content="noindex" />
         <meta name="theme-color" content="#00ffe0" />
