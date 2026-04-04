@@ -23,7 +23,7 @@ export default function Blog() {
       <Head>
         <title>Blog — TruthScan AI</title>
         <meta name="description" content="Real talk about texting, mixed signals, late replies and relationship patterns. No fluff." />
-        <link rel="canonical" href="https://truthscan.fun/blog" />
+        <link rel="canonical" href="https://www.truthscan.fun/blog" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="theme-color" content="#00ffe0" />
       </Head>
