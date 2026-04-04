@@ -88,8 +88,8 @@ export default function Pricing() {
       <title>Buy Scan Credits — TruthScan AI</title>
       <meta name="description" content="Buy AI chat analysis credits. Decode hidden intent in any WhatsApp, Instagram or Telegram chat. Starting at just ₹10." />
       <meta property="og:title" content="Buy Scan Credits — TruthScan AI" />
-      <meta property="og:url" content="https://truthscan.fun/pricing" />
-      <link rel="canonical" href="https://truthscan.fun/pricing" />
+      <meta property="og:url" content="https://www.truthscan.fun/pricing" />
+      <link rel="canonical" href="https://www.truthscan.fun/pricing" />
       <link rel="icon" href="/favicon.ico" sizes="any" />
       <meta name="theme-color" content="#00ffe0" />
     </Head>
