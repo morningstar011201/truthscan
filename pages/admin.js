@@ -20,6 +20,12 @@ export default function Admin() {
   const [deductEmail, setDeductEmail] = useState("");
   const [deductAmount, setDeductAmount] = useState("");
 
+  // Promo code states
+  const [newPromoCode, setNewPromoCode] = useState("");
+  const [newPromoBonus, setNewPromoBonus] = useState("20");
+  const [newPromoInfluencer, setNewPromoInfluencer] = useState("");
+  const [promoMsg, setPromoMsg] = useState("");
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       const u = session?.user;
@@ -47,6 +53,27 @@ export default function Admin() {
     if (action === "delete_user") { setSelectedUser(null); setUserDetail(null); }
     fetchStats(user.email);
     setTimeout(() => setActionMsg(""), 3000);
+  }
+
+  async function promoAction(action, payload) {
+    const res = await fetch("/api/admin-stats", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: user.email, action, payload }) });
+    const data = await res.json();
+    if (data.error) { setPromoMsg("❌ " + data.error); setTimeout(() => setPromoMsg(""), 3000); return; }
+    setPromoMsg("✅ Done!");
+    fetchStats(user.email);
+    setTimeout(() => setPromoMsg(""), 3000);
+  }
+
+  async function createPromo() {
+    if (!newPromoCode.trim() || !newPromoBonus) { setPromoMsg("❌ Code and bonus % required!"); return; }
+    await promoAction("create_promo", {
+      code: newPromoCode.trim().toUpperCase(),
+      bonus_percent: parseInt(newPromoBonus),
+      influencer_name: newPromoInfluencer.trim() || "Unknown"
+    });
+    setNewPromoCode("");
+    setNewPromoBonus("20");
+    setNewPromoInfluencer("");
   }
 
   async function openUserDetail(email) {
@@ -124,12 +151,10 @@ export default function Admin() {
               <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>👤 User Detail</div>
               <button onClick={() => { setSelectedUser(null); setUserDetail(null); }} style={{ background: "none", border: "none", color: "#8899aa", fontSize: 22, cursor: "pointer" }}>✕</button>
             </div>
-
             {userDetailLoading ? (
               <div style={{ textAlign: "center", color: "#00ffe0", fontFamily: "monospace", padding: 40 }}>Loading...</div>
             ) : userDetail?.profile ? (
               <>
-                {/* Profile Info */}
                 <div style={{ ...s.card, marginBottom: 16 }}>
                   <div style={s.label}>PROFILE INFO</div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
@@ -152,13 +177,9 @@ export default function Admin() {
                     ))}
                   </div>
                 </div>
-
-                {/* Purchase History */}
                 <div style={{ ...s.card, marginBottom: 16 }}>
                   <div style={s.label}>PURCHASE HISTORY ({userDetail.payments?.length || 0} payments)</div>
-                  {userDetail.payments?.length === 0 ? (
-                    <div style={{ color: "#8899aa", fontSize: 13 }}>No purchases yet</div>
-                  ) : (
+                  {userDetail.payments?.length === 0 ? <div style={{ color: "#8899aa", fontSize: 13 }}>No purchases yet</div> : (
                     <table style={s.table}>
                       <thead><tr>{["PACK", "AMOUNT", "CREDITS", "STATUS", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                       <tbody>
@@ -175,13 +196,9 @@ export default function Admin() {
                     </table>
                   )}
                 </div>
-
-                {/* Credit History Ledger */}
                 <div style={{ ...s.card, marginBottom: 16 }}>
-                  <div style={s.label}>CREDIT LEDGER — FULL TRANSACTION HISTORY</div>
-                  {userDetail.creditHistory?.length === 0 ? (
-                    <div style={{ color: "#8899aa", fontSize: 13 }}>No credit history yet</div>
-                  ) : (
+                  <div style={s.label}>CREDIT LEDGER</div>
+                  {userDetail.creditHistory?.length === 0 ? <div style={{ color: "#8899aa", fontSize: 13 }}>No credit history yet</div> : (
                     <table style={s.table}>
                       <thead><tr>{["ACTION", "CREDITS", "BALANCE AFTER", "NOTE", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                       <tbody>
@@ -191,12 +208,8 @@ export default function Admin() {
                           const balance = balanceMatch ? balanceMatch[1] : "—";
                           return (
                             <tr key={i}>
-                              <td style={{ ...s.td, color: isAdd ? "#00e85a" : "#ff3d6e", fontWeight: 700 }}>
-                                {isAdd ? "+" : "−"} {c.action.replace("_", " ").toUpperCase()}
-                              </td>
-                              <td style={{ ...s.td, color: isAdd ? "#00e85a" : "#ff3d6e", fontWeight: 900 }}>
-                                {isAdd ? "+" : "−"}{c.credits}
-                              </td>
+                              <td style={{ ...s.td, color: isAdd ? "#00e85a" : "#ff3d6e", fontWeight: 700 }}>{isAdd ? "+" : "−"} {c.action.replace("_", " ").toUpperCase()}</td>
+                              <td style={{ ...s.td, color: isAdd ? "#00e85a" : "#ff3d6e", fontWeight: 900 }}>{isAdd ? "+" : "−"}{c.credits}</td>
                               <td style={{ ...s.td, color: "#ffe600", fontFamily: "monospace" }}>{balance}</td>
                               <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{c.note?.replace(/\s*\| Balance: \d+/, "") || "—"}</td>
                               <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{new Date(c.created_at).toLocaleString("en-IN")}</td>
@@ -207,8 +220,6 @@ export default function Admin() {
                     </table>
                   )}
                 </div>
-
-                {/* Admin Actions */}
                 <div style={s.card}>
                   <div style={s.label}>ADMIN ACTIONS</div>
                   <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -221,7 +232,7 @@ export default function Admin() {
                     </button>
                     <button onClick={() => setConfirmPopup({
                       title: "🔥 Permanently Delete User?",
-                      message: `This will PERMANENTLY delete ${userDetail.profile.email} and ALL their data — scans, payments, credits. THIS CANNOT BE UNDONE.`,
+                      message: `This will PERMANENTLY delete ${userDetail.profile.email} and ALL their data. THIS CANNOT BE UNDONE.`,
                       onConfirm: () => adminAction("delete_user", { targetEmail: userDetail.profile.email })
                     })} style={{ ...s.btnRed, border: "2px solid rgba(255,61,110,0.6)", fontWeight: 900 }}>
                       🔥 Delete User Permanently
@@ -229,9 +240,7 @@ export default function Admin() {
                   </div>
                 </div>
               </>
-            ) : (
-              <div style={{ color: "#ff3d6e" }}>User not found</div>
-            )}
+            ) : <div style={{ color: "#ff3d6e" }}>User not found</div>}
           </div>
         </div>
       )}
@@ -247,7 +256,7 @@ export default function Admin() {
 
       {/* TABS */}
       <div style={{ ...s.wrap, display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-        {["overview", "payments", "users", "scans", "controls"].map(t => (
+        {["overview", "payments", "users", "scans", "promos", "controls"].map(t => (
           <button key={t} onClick={() => setActiveTab(t)} style={s.tab(activeTab === t)}>{t.toUpperCase()}</button>
         ))}
       </div>
@@ -453,6 +462,75 @@ export default function Admin() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* PROMO CODES */}
+        {activeTab === "promos" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {promoMsg && <div style={{ padding: "12px 16px", background: promoMsg.startsWith("✅") ? "rgba(0,232,90,0.07)" : "rgba(255,61,110,0.07)", border: `1px solid ${promoMsg.startsWith("✅") ? "rgba(0,232,90,0.2)" : "rgba(255,61,110,0.2)"}`, borderRadius: 10, color: promoMsg.startsWith("✅") ? "#00e85a" : "#ff3d6e", fontFamily: "monospace", fontSize: 13 }}>{promoMsg}</div>}
+
+            {/* Create New Code */}
+            <div style={s.card}>
+              <div style={s.label}>🎟️ CREATE NEW PROMO CODE</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 12 }}>
+                <div>
+                  <div style={{ ...s.label, marginBottom: 6 }}>CODE</div>
+                  <input style={{ ...s.input, fontFamily: "monospace", letterSpacing: 2, textTransform: "uppercase" }} placeholder="e.g. TECH20" value={newPromoCode} onChange={e => setNewPromoCode(e.target.value.toUpperCase())} />
+                </div>
+                <div>
+                  <div style={{ ...s.label, marginBottom: 6 }}>BONUS %</div>
+                  <input style={s.input} type="number" placeholder="20" value={newPromoBonus} onChange={e => setNewPromoBonus(e.target.value)} min="1" max="100" />
+                </div>
+                <div>
+                  <div style={{ ...s.label, marginBottom: 6 }}>INFLUENCER NAME</div>
+                  <input style={s.input} placeholder="e.g. TechYash" value={newPromoInfluencer} onChange={e => setNewPromoInfluencer(e.target.value)} />
+                </div>
+              </div>
+              <button onClick={createPromo} style={s.btn}>🎟️ CREATE CODE</button>
+            </div>
+
+            {/* All Codes */}
+            <div style={s.card}>
+              <div style={s.label}>ALL PROMO CODES ({stats.promoCodes?.length || 0})</div>
+              {stats.promoCodes?.length === 0 ? (
+                <div style={{ color: "#8899aa", fontSize: 13 }}>No promo codes yet</div>
+              ) : (
+                <table style={s.table}>
+                  <thead>
+                    <tr>{["CODE", "INFLUENCER", "BONUS %", "TOTAL USES", "STATUS", "CREATED", "ACTIONS"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {stats.promoCodes?.map((code, i) => (
+                      <tr key={i}>
+                        <td style={{ ...s.td, color: "#00ffe0", fontFamily: "monospace", fontWeight: 900, letterSpacing: 2 }}>{code.code}</td>
+                        <td style={s.td}>{code.influencer_name || "—"}</td>
+                        <td style={{ ...s.td, color: "#ffe600", fontWeight: 700 }}>+{code.bonus_percent}%</td>
+                        <td style={{ ...s.td, color: "#c060ff", fontWeight: 700 }}>{code.total_uses || 0}</td>
+                        <td style={{ ...s.td, color: code.is_active ? "#00e85a" : "#ff3d6e", fontWeight: 700 }}>
+                          {code.is_active ? "✅ Active" : "⏸️ Paused"}
+                        </td>
+                        <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{new Date(code.created_at).toLocaleDateString("en-IN")}</td>
+                        <td style={{ ...s.td }}>
+                          <div style={{ display: "flex", gap: 6 }}>
+                            <button
+                              onClick={() => promoAction("toggle_promo", { id: code.id, is_active: !code.is_active })}
+                              style={{ ...code.is_active ? s.btnYellow : s.btnGreen, padding: "4px 10px", fontSize: 11 }}>
+                              {code.is_active ? "⏸ Pause" : "▶ Enable"}
+                            </button>
+                            <button
+                              onClick={() => setConfirmPopup({ title: "Delete Promo Code?", message: `Delete code ${code.code}? This cannot be undone.`, onConfirm: () => promoAction("delete_promo", { id: code.id }) })}
+                              style={{ ...s.btnRed, padding: "4px 10px", fontSize: 11 }}>
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         )}
