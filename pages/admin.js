@@ -471,6 +471,20 @@ export default function Admin() {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {promoMsg && <div style={{ padding: "12px 16px", background: promoMsg.startsWith("✅") ? "rgba(0,232,90,0.07)" : "rgba(255,61,110,0.07)", border: `1px solid ${promoMsg.startsWith("✅") ? "rgba(0,232,90,0.2)" : "rgba(255,61,110,0.2)"}`, borderRadius: 10, color: promoMsg.startsWith("✅") ? "#00e85a" : "#ff3d6e", fontFamily: "monospace", fontSize: 13 }}>{promoMsg}</div>}
 
+            {/* Promo Revenue Summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              {[
+                { label: "TOTAL PROMO REVENUE", value: "₹" + (stats.promoRevenue?.total || 0), color: "#ffe600" },
+                { label: "TOTAL PROMO USES", value: stats.promoRevenue?.totalUses || 0, color: "#00ffe0" },
+                { label: "ACTIVE CODES", value: stats.promoCodes?.filter(c => c.is_active).length || 0, color: "#00e85a" },
+              ].map((item, i) => (
+                <div key={i} style={s.card}>
+                  <div style={s.label}>{item.label}</div>
+                  <div style={{ ...s.big, color: item.color }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+
             {/* Create New Code */}
             <div style={s.card}>
               <div style={s.label}>🎟️ CREATE NEW PROMO CODE</div>
@@ -491,47 +505,91 @@ export default function Admin() {
               <button onClick={createPromo} style={s.btn}>🎟️ CREATE CODE</button>
             </div>
 
-            {/* All Codes */}
-            <div style={s.card}>
-              <div style={s.label}>ALL PROMO CODES ({stats.promoCodes?.length || 0})</div>
-              {stats.promoCodes?.length === 0 ? (
-                <div style={{ color: "#8899aa", fontSize: 13 }}>No promo codes yet</div>
-              ) : (
-                <table style={s.table}>
-                  <thead>
-                    <tr>{["CODE", "INFLUENCER", "BONUS %", "TOTAL USES", "STATUS", "CREATED", "ACTIONS"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr>
-                  </thead>
-                  <tbody>
-                    {stats.promoCodes?.map((code, i) => (
-                      <tr key={i}>
-                        <td style={{ ...s.td, color: "#00ffe0", fontFamily: "monospace", fontWeight: 900, letterSpacing: 2 }}>{code.code}</td>
-                        <td style={s.td}>{code.influencer_name || "—"}</td>
-                        <td style={{ ...s.td, color: "#ffe600", fontWeight: 700 }}>+{code.bonus_percent}%</td>
-                        <td style={{ ...s.td, color: "#c060ff", fontWeight: 700 }}>{code.total_uses || 0}</td>
-                        <td style={{ ...s.td, color: code.is_active ? "#00e85a" : "#ff3d6e", fontWeight: 700 }}>
-                          {code.is_active ? "✅ Active" : "⏸️ Paused"}
-                        </td>
-                        <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{new Date(code.created_at).toLocaleDateString("en-IN")}</td>
-                        <td style={{ ...s.td }}>
-                          <div style={{ display: "flex", gap: 6 }}>
-                            <button
-                              onClick={() => promoAction("toggle_promo", { id: code.id, is_active: !code.is_active })}
-                              style={{ ...code.is_active ? s.btnYellow : s.btnGreen, padding: "4px 10px", fontSize: 11 }}>
-                              {code.is_active ? "⏸ Pause" : "▶ Enable"}
-                            </button>
-                            <button
-                              onClick={() => setConfirmPopup({ title: "Delete Promo Code?", message: `Delete code ${code.code}? This cannot be undone.`, onConfirm: () => promoAction("delete_promo", { id: code.id }) })}
-                              style={{ ...s.btnRed, padding: "4px 10px", fontSize: 11 }}>
-                              🗑️
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+            {/* All Codes with Revenue Details */}
+            {stats.promoCodes?.length === 0 ? (
+              <div style={{ ...s.card, color: "#8899aa", fontSize: 13 }}>No promo codes yet</div>
+            ) : (
+              stats.promoCodes?.map((code, i) => (
+                <div key={i} style={{ ...s.card, border: code.is_active ? "1px solid rgba(0,255,224,0.12)" : "1px solid rgba(255,255,255,0.05)" }}>
+                  {/* Code Header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
+                    <div>
+                      <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 900, color: "#00ffe0", letterSpacing: 3 }}>{code.code}</div>
+                      <div style={{ fontSize: 12, color: "#8899aa", marginTop: 4 }}>
+                        👤 {code.influencer_name || "Unknown"} · +{code.bonus_percent}% bonus · {code.is_active ? "✅ Active" : "⏸️ Paused"}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#445060", fontFamily: "monospace", marginTop: 2 }}>
+                        Created: {new Date(code.created_at).toLocaleDateString("en-IN")}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button onClick={() => promoAction("toggle_promo", { id: code.id, is_active: !code.is_active })}
+                        style={{ ...code.is_active ? s.btnYellow : s.btnGreen, padding: "6px 14px", fontSize: 12 }}>
+                        {code.is_active ? "⏸ Pause" : "▶ Enable"}
+                      </button>
+                      <button onClick={() => setConfirmPopup({ title: "Delete Promo Code?", message: `Delete code ${code.code}? Cannot be undone.`, onConfirm: () => promoAction("delete_promo", { id: code.id }) })}
+                        style={{ ...s.btnRed, padding: "6px 12px", fontSize: 12 }}>🗑️ Delete</button>
+                    </div>
+                  </div>
+
+                  {/* Revenue Stats */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 10, marginBottom: 16 }}>
+                    {[
+                      { label: "TOTAL REVENUE", value: "₹" + (code.revenue || 0), color: "#ffe600" },
+                      { label: "TOTAL USES", value: code.total_uses || 0, color: "#c060ff" },
+                      { label: "UNIQUE USERS", value: code.unique_users || 0, color: "#00ffe0" },
+                    ].map((stat, j) => (
+                      <div key={j} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: "12px 14px" }}>
+                        <div style={{ fontFamily: "monospace", fontSize: 8, letterSpacing: 2, color: "#445060", marginBottom: 4 }}>{stat.label}</div>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: stat.color }}>{stat.value}</div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+                  </div>
+
+                  {/* Pack Breakdown */}
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>🛒 PACK BREAKDOWN</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                      {[
+                        { name: "STARTER ₹10", pack: "starter", color: "#00ffe0" },
+                        { name: "POPULAR ₹99", pack: "popular", color: "#ffe600" },
+                        { name: "POWER ₹199", pack: "power", color: "#c060ff" },
+                      ].map((pack, j) => (
+                        <div key={j} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: "10px 12px", border: `1px solid ${pack.color}22` }}>
+                          <div style={{ fontFamily: "monospace", fontSize: 9, color: "#445060", marginBottom: 4 }}>{pack.name}</div>
+                          <div style={{ fontSize: 16, fontWeight: 900, color: pack.color }}>{code.packs?.[pack.pack]?.count || 0} sales</div>
+                          <div style={{ fontSize: 11, color: "#8899aa" }}>₹{code.packs?.[pack.pack]?.revenue || 0}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Transaction History */}
+                  {code.transactions?.length > 0 && (
+                    <div>
+                      <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>📋 TRANSACTION HISTORY ({code.transactions.length})</div>
+                      <table style={s.table}>
+                        <thead><tr>{["USER EMAIL", "PACK", "AMOUNT", "CREDITS", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
+                        <tbody>
+                          {code.transactions.map((t, j) => (
+                            <tr key={j}>
+                              <td style={{ ...s.td, color: "#00ffe0", fontSize: 11 }}>{t.email}</td>
+                              <td style={{ ...s.td, fontFamily: "monospace", fontSize: 11 }}>{t.pack}</td>
+                              <td style={{ ...s.td, color: "#ffe600", fontWeight: 700 }}>₹{t.amount}</td>
+                              <td style={{ ...s.td, color: "#c060ff" }}>{t.credits}</td>
+                              <td style={{ ...s.td, color: "#8899aa", fontSize: 11 }}>{new Date(t.created_at).toLocaleDateString("en-IN")}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                  {code.transactions?.length === 0 && (
+                    <div style={{ fontSize: 12, color: "#445060", fontFamily: "monospace" }}>No transactions yet for this code</div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         )}
 
