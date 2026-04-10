@@ -46,6 +46,30 @@ export default async function handler(req, res) {
     return res.json({ success: true });
   }
 
+  if (action === "create_promo") {
+    const { code, bonus_percent, influencer_name } = payload;
+    if (!code || !bonus_percent) return res.status(400).json({ error: "Code and bonus % required" });
+    const { data, error } = await supabase.from("promo_codes").insert({
+      code: code.toUpperCase().trim(),
+      bonus_percent: parseInt(bonus_percent),
+      influencer_name: influencer_name || "Unknown"
+    }).select().single();
+    if (error) return res.status(400).json({ error: "Code already exists or invalid!" });
+    return res.json({ success: true, data });
+  }
+
+  if (action === "toggle_promo") {
+    const { id, is_active } = payload;
+    await supabase.from("promo_codes").update({ is_active }).eq("id", id);
+    return res.json({ success: true });
+  }
+
+  if (action === "delete_promo") {
+    const { id } = payload;
+    await supabase.from("promo_codes").delete().eq("id", id);
+    return res.json({ success: true });
+  }
+
   if (action === "delete_user") {
     const { targetEmail } = payload;
     const { data: profile } = await supabase.from("profiles").select("id").eq("email", targetEmail).single();
@@ -75,6 +99,7 @@ export default async function handler(req, res) {
   const { data: allUsers } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
   const { data: payments } = await supabase.from("payments").select("*").order("created_at", { ascending: false });
   const { data: scans } = await supabase.from("scan_results").select("*").order("created_at", { ascending: false });
+  const { data: promoCodes } = await supabase.from("promo_codes").select("*").order("created_at", { ascending: false });
 
   const todayUsers = allUsers?.filter(u => u.created_at?.startsWith(today)) || [];
   const weekUsers = allUsers?.filter(u => new Date(u.created_at) > new Date(weekAgo)) || [];
@@ -102,24 +127,14 @@ export default async function handler(req, res) {
   }
 
   const topUsers = [...(allUsers || [])].sort((a, b) => (b.total_scans || 0) - (a.total_scans || 0)).slice(0, 10);
-
-  // Active users today (did at least 1 scan today)
   const activeToday = allUsers?.filter(u => u.last_scan_date === today).length || 0;
-
-  // Avg scans per user
   const avgScansPerUser = allUsers?.length > 0 ? (scans?.length / allUsers.length).toFixed(1) : 0;
-
-  // First scan conversion
   const usersWhoScanned = allUsers?.filter(u => (u.total_scans || 0) > 0).length || 0;
   const firstScanRate = allUsers?.length > 0 ? Math.round((usersWhoScanned / allUsers.length) * 100) : 0;
   const conversionRate = allUsers?.length > 0 ? Math.round((payingUserIds.length / allUsers.length) * 100) : 0;
-
-  // Cost estimator (Groq is free but estimate)
-  const costPerScan = 0.002; // estimated $0.002 per scan
+  const costPerScan = 0.002;
   const todayCost = (todayScans.length * costPerScan).toFixed(4);
   const monthCost = (monthPayments.length > 0 ? scans?.filter(s => new Date(s.created_at) > new Date(monthAgo)).length : 0) * costPerScan;
-
-  // Viral users (scanned 5+ times)
   const viralUsers = [...(allUsers || [])].filter(u => (u.total_scans || 0) >= 5).sort((a, b) => (b.total_scans || 0) - (a.total_scans || 0)).slice(0, 10);
 
   res.json({
@@ -133,5 +148,6 @@ export default async function handler(req, res) {
     viralUsers,
     conversion: { total: allUsers?.length || 0, scanned: usersWhoScanned, paid: payingUserIds.length, rate: conversionRate, firstScanRate },
     costs: { todayScans: todayScans.length, todayCost, monthCost: monthCost.toFixed(4), costPerScan },
+    promoCodes: promoCodes || [],
   });
 }
