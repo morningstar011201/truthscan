@@ -137,6 +137,47 @@ export default async function handler(req, res) {
   const monthCost = (monthPayments.length > 0 ? scans?.filter(s => new Date(s.created_at) > new Date(monthAgo)).length : 0) * costPerScan;
   const viralUsers = [...(allUsers || [])].filter(u => (u.total_scans || 0) >= 5).sort((a, b) => (b.total_scans || 0) - (a.total_scans || 0)).slice(0, 10);
 
+  // PROMO REVENUE ANALYTICS
+  const promoPayments = payments?.filter(p => p.promo_code) || [];
+  const promoStats = {};
+
+  promoPayments.forEach(p => {
+    const code = p.promo_code;
+    if (!promoStats[code]) {
+      promoStats[code] = {
+        total_uses: 0,
+        total_revenue: 0,
+        unique_users: new Set(),
+        packs: { starter: { count: 0, revenue: 0 }, popular: { count: 0, revenue: 0 }, power: { count: 0, revenue: 0 } },
+        transactions: []
+      };
+    }
+    promoStats[code].total_uses++;
+    promoStats[code].total_revenue += p.amount || 0;
+    promoStats[code].unique_users.add(p.user_id);
+    if (promoStats[code].packs[p.pack]) {
+      promoStats[code].packs[p.pack].count++;
+      promoStats[code].packs[p.pack].revenue += p.amount || 0;
+    }
+    promoStats[code].transactions.push({
+      email: p.email,
+      pack: p.pack,
+      amount: p.amount,
+      credits: p.credits,
+      created_at: p.created_at
+    });
+  });
+
+  const promoCodesWithStats = (promoCodes || []).map(pc => ({
+    ...pc,
+    revenue: promoStats[pc.code]?.total_revenue || 0,
+    unique_users: promoStats[pc.code] ? promoStats[pc.code].unique_users.size : 0,
+    packs: promoStats[pc.code]?.packs || { starter: { count: 0, revenue: 0 }, popular: { count: 0, revenue: 0 }, power: { count: 0, revenue: 0 } },
+    transactions: promoStats[pc.code]?.transactions || []
+  }));
+
+  const totalPromoRevenue = promoPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
   res.json({
     users: { total: allUsers?.length || 0, today: todayUsers.length, week: weekUsers.length, paying: payingUserIds.length, activeToday, all: allUsers || [] },
     revenue: { total: totalRevenue, today: todayRevenue, month: monthRevenue, arppu },
@@ -148,6 +189,7 @@ export default async function handler(req, res) {
     viralUsers,
     conversion: { total: allUsers?.length || 0, scanned: usersWhoScanned, paid: payingUserIds.length, rate: conversionRate, firstScanRate },
     costs: { todayScans: todayScans.length, todayCost, monthCost: monthCost.toFixed(4), costPerScan },
-    promoCodes: promoCodes || [],
+    promoCodes: promoCodesWithStats,
+    promoRevenue: { total: totalPromoRevenue, totalUses: promoPayments.length },
   });
 }
