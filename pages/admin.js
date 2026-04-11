@@ -98,17 +98,17 @@ export default function Admin() {
   }
 
   const s = {
-    page: { minHeight: "100vh", background: "#080b10", color: "#dde2ea", fontFamily: "'Segoe UI', sans-serif", padding: "0 16px 60px" },
+    page: { minHeight: "100vh", background: "#080b10", color: "#dde2ea", fontFamily: "'Segoe UI', sans-serif", padding: "0 12px 60px", overflowX: "hidden" },
     nav: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0", maxWidth: 1200, margin: "0 auto" },
-    wrap: { maxWidth: 1200, margin: "0 auto" },
-    grid4: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 16 },
-    grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12, marginBottom: 16 },
+    wrap: { maxWidth: 1200, margin: "0 auto", overflowX: "hidden" },
+    grid4: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 16 },
+    grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10, marginBottom: 16 },
     card: { background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px" },
     label: { fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 8 },
     big: { fontSize: 32, fontWeight: 900, color: "#00ffe0" },
     sub: { fontSize: 12, color: "#8899aa", marginTop: 4 },
     tab: (active) => ({ padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(0,255,224,0.2)", background: active ? "rgba(0,255,224,0.12)" : "transparent", color: active ? "#00ffe0" : "#8899aa", cursor: "pointer", fontSize: 12, fontWeight: 600 }),
-    table: { width: "100%", borderCollapse: "collapse" },
+    table: { width: "100%", borderCollapse: "collapse", display: "block", overflowX: "auto", WebkitOverflowScrolling: "touch" },
     th: { fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#8899aa", padding: "8px 12px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.05)" },
     td: { fontSize: 12, color: "#dde2ea", padding: "10px 12px", borderBottom: "1px solid rgba(255,255,255,0.03)" },
     input: { background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "10px 14px", color: "#dde2ea", fontSize: 13, width: "100%" },
@@ -118,6 +118,7 @@ export default function Admin() {
     btnYellow: { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,230,0,0.4)", background: "rgba(255,230,0,0.08)", color: "#ffe600", fontSize: 12, fontWeight: 700, cursor: "pointer" },
   };
 
+  if (typeof document !== "undefined") document.body.style.overflowX = "hidden";
   if (loading) return <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ fontFamily: "monospace", color: "#00ffe0", fontSize: 14, letterSpacing: 3 }}>LOADING ADMIN...</div></div>;
   if (error) return <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ color: "#ff3d6e", fontSize: 18, fontWeight: 700 }}>{error}</div></div>;
 
