@@ -1,4 +1,4 @@
-im         import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 
 const ADMIN_EMAIL = "mr.morningstar011201@gmail.com";
@@ -644,4 +644,4 @@ export default function Admin() {
       </div>
     </div>
   );
-}                                             
+}
