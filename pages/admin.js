@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+im         import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 
 const ADMIN_EMAIL = "mr.morningstar011201@gmail.com";
@@ -98,27 +98,27 @@ export default function Admin() {
   }
 
   const s = {
-    page: { minHeight: "100vh", background: "#080b10", color: "#dde2ea", fontFamily: "'Segoe UI', sans-serif", padding: "0 12px 60px", overflowX: "hidden" },
-    nav: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 0", maxWidth: 1200, margin: "0 auto" },
-    wrap: { maxWidth: 1200, margin: "0 auto", overflowX: "hidden" },
-    grid4: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 16 },
-    grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10, marginBottom: 16 },
-    card: { background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px" },
+    page: { minHeight: "100vh", background: "#080b10", color: "#dde2ea", fontFamily: "'Segoe UI', sans-serif", padding: "0 12px 60px", maxWidth: "100vw", overflowX: "hidden" },
+    nav: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", maxWidth: 1200, margin: "0 auto", flexWrap: "wrap", gap: 8 },
+    wrap: { maxWidth: 1200, margin: "0 auto", width: "100%", overflowX: "hidden" },
+    grid4: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, marginBottom: 16 },
+    grid3: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 16 },
+    card: { background: "#0d1520", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "16px", overflowX: "hidden" },
     label: { fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#8899aa", marginBottom: 8 },
-    big: { fontSize: 32, fontWeight: 900, color: "#00ffe0" },
+    big: { fontSize: 28, fontWeight: 900, color: "#00ffe0" },
     sub: { fontSize: 12, color: "#8899aa", marginTop: 4 },
-    tab: (active) => ({ padding: "8px 16px", borderRadius: 8, border: "1px solid rgba(0,255,224,0.2)", background: active ? "rgba(0,255,224,0.12)" : "transparent", color: active ? "#00ffe0" : "#8899aa", cursor: "pointer", fontSize: 12, fontWeight: 600 }),
-    table: { width: "100%", borderCollapse: "collapse", display: "block", overflowX: "auto", WebkitOverflowScrolling: "touch" },
-    th: { fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#8899aa", padding: "8px 12px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.05)" },
-    td: { fontSize: 12, color: "#dde2ea", padding: "10px 12px", borderBottom: "1px solid rgba(255,255,255,0.03)" },
-    input: { background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "10px 14px", color: "#dde2ea", fontSize: 13, width: "100%" },
-    btn: { padding: "10px 20px", borderRadius: 8, border: "2px solid rgba(0,255,224,0.4)", background: "rgba(0,255,224,0.08)", color: "#00ffe0", fontSize: 13, fontWeight: 700, cursor: "pointer" },
-    btnRed: { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,61,110,0.4)", background: "rgba(255,61,110,0.08)", color: "#ff3d6e", fontSize: 12, fontWeight: 700, cursor: "pointer" },
-    btnGreen: { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(0,232,90,0.4)", background: "rgba(0,232,90,0.08)", color: "#00e85a", fontSize: 12, fontWeight: 700, cursor: "pointer" },
-    btnYellow: { padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,230,0,0.4)", background: "rgba(255,230,0,0.08)", color: "#ffe600", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    tab: (active) => ({ padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(0,255,224,0.2)", background: active ? "rgba(0,255,224,0.12)" : "transparent", color: active ? "#00ffe0" : "#8899aa", cursor: "pointer", fontSize: 11, fontWeight: 600 }),
+    tableWrap: { overflowX: "auto", WebkitOverflowScrolling: "touch", width: "100%" },
+    table: { width: "100%", borderCollapse: "collapse", minWidth: 400 },
+    th: { fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#8899aa", padding: "8px 10px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.05)", whiteSpace: "nowrap" },
+    td: { fontSize: 11, color: "#dde2ea", padding: "9px 10px", borderBottom: "1px solid rgba(255,255,255,0.03)", whiteSpace: "nowrap" },
+    input: { background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "10px 14px", color: "#dde2ea", fontSize: 13, width: "100%", boxSizing: "border-box" },
+    btn: { padding: "9px 16px", borderRadius: 8, border: "2px solid rgba(0,255,224,0.4)", background: "rgba(0,255,224,0.08)", color: "#00ffe0", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+    btnRed: { padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(255,61,110,0.4)", background: "rgba(255,61,110,0.08)", color: "#ff3d6e", fontSize: 11, fontWeight: 700, cursor: "pointer" },
+    btnGreen: { padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(0,232,90,0.4)", background: "rgba(0,232,90,0.08)", color: "#00e85a", fontSize: 11, fontWeight: 700, cursor: "pointer" },
+    btnYellow: { padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(255,230,0,0.4)", background: "rgba(255,230,0,0.08)", color: "#ffe600", fontSize: 11, fontWeight: 700, cursor: "pointer" },
   };
 
-  if (typeof document !== "undefined") document.body.style.overflowX = "hidden";
   if (loading) return <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ fontFamily: "monospace", color: "#00ffe0", fontSize: 14, letterSpacing: 3 }}>LOADING ADMIN...</div></div>;
   if (error) return <div style={{ ...s.page, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ color: "#ff3d6e", fontSize: 18, fontWeight: 700 }}>{error}</div></div>;
 
@@ -129,6 +129,10 @@ export default function Admin() {
 
   return (
     <div style={s.page}>
+      <style>{`
+        html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+        * { box-sizing: border-box; }
+      `}</style>
 
       {/* CONFIRM POPUP */}
       {confirmPopup && (
@@ -181,7 +185,7 @@ export default function Admin() {
                 <div style={{ ...s.card, marginBottom: 16 }}>
                   <div style={s.label}>PURCHASE HISTORY ({userDetail.payments?.length || 0} payments)</div>
                   {userDetail.payments?.length === 0 ? <div style={{ color: "#8899aa", fontSize: 13 }}>No purchases yet</div> : (
-                    <table style={s.table}>
+                    <div style={s.tableWrap}><table style={s.table}>
                       <thead><tr>{["PACK", "AMOUNT", "CREDITS", "STATUS", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                       <tbody>
                         {userDetail.payments?.map((p, i) => (
@@ -194,13 +198,13 @@ export default function Admin() {
                           </tr>
                         ))}
                       </tbody>
-                    </table>
+                    </table></div>
                   )}
                 </div>
                 <div style={{ ...s.card, marginBottom: 16 }}>
                   <div style={s.label}>CREDIT LEDGER</div>
                   {userDetail.creditHistory?.length === 0 ? <div style={{ color: "#8899aa", fontSize: 13 }}>No credit history yet</div> : (
-                    <table style={s.table}>
+                    <div style={s.tableWrap}><table style={s.table}>
                       <thead><tr>{["ACTION", "CREDITS", "BALANCE AFTER", "NOTE", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                       <tbody>
                         {userDetail.creditHistory?.map((c, i) => {
@@ -218,7 +222,7 @@ export default function Admin() {
                           );
                         })}
                       </tbody>
-                    </table>
+                    </table></div>
                   )}
                 </div>
                 <div style={s.card}>
@@ -357,7 +361,7 @@ export default function Admin() {
               {stats.viralUsers?.length === 0 ? (
                 <div style={{ color: "#8899aa", fontSize: 13 }}>No viral users yet — keep growing!</div>
               ) : (
-                <table style={s.table}>
+                <div style={s.tableWrap}><table style={s.table}>
                   <thead><tr>{["EMAIL", "TOTAL SCANS", "CREDITS LEFT", "LAST SCAN"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                   <tbody>
                     {stats.viralUsers?.map((u, i) => (
@@ -369,7 +373,7 @@ export default function Admin() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               )}
             </div>
 
@@ -396,7 +400,7 @@ export default function Admin() {
         {activeTab === "payments" && (
           <div style={s.card}>
             <div style={s.label}>RECENT PAYMENTS ({stats.payments.total} total)</div>
-            <table style={s.table}>
+            <div style={s.tableWrap}><table style={s.table}>
               <thead><tr>{["EMAIL", "PACK", "AMOUNT", "CREDITS", "STATUS", "ORDER ID", "TIME"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
               <tbody>
                 {stats.payments.recent.map((p, i) => (
@@ -411,7 +415,7 @@ export default function Admin() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
 
@@ -424,7 +428,7 @@ export default function Admin() {
             </div>
             <div style={s.card}>
               <div style={s.label}>ALL USERS ({filteredUsers.length})</div>
-              <table style={s.table}>
+              <div style={s.tableWrap}><table style={s.table}>
                 <thead><tr>{["NAME", "EMAIL", "TOTAL SCANS", "CREDITS", "PAYING", "SIGNUP DATE", "STATUS", ""].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                 <tbody>
                   {filteredUsers.map((u, i) => (
@@ -442,7 +446,7 @@ export default function Admin() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             </div>
           </>
         )}
@@ -569,7 +573,7 @@ export default function Admin() {
                   {code.transactions?.length > 0 && (
                     <div>
                       <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>📋 TRANSACTION HISTORY ({code.transactions.length})</div>
-                      <table style={s.table}>
+                      <div style={s.tableWrap}><table style={s.table}>
                         <thead><tr>{["USER EMAIL", "PACK", "AMOUNT", "CREDITS", "DATE"].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
                         <tbody>
                           {code.transactions.map((t, j) => (
@@ -582,7 +586,7 @@ export default function Admin() {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                      </table></div>
                     </div>
                   )}
                   {code.transactions?.length === 0 && (
@@ -640,4 +644,4 @@ export default function Admin() {
       </div>
     </div>
   );
-                                                             }
+}                                             
