@@ -4,9 +4,9 @@ import { supabase } from "../lib/supabase";
 
 const PACKS = [
   { id: "free", name: "FREE", price: 0, credits: "1/day", desc: "1 free scan daily, resets midnight", badge: null, color: "#8899aa", btnText: "CURRENT PLAN", disabled: true },
-  { id: "starter", name: "STARTER", price: 10, credits: 7, desc: "7 scans, never expire", badge: null, color: "#00ffe0", btnText: "BUY ₹10" },
-  { id: "popular", name: "POPULAR", price: 99, credits: 80, desc: "80 scans, never expire", badge: "🔥 MOST POPULAR", color: "#ffe600", btnText: "BUY ₹99" },
-  { id: "power", name: "POWER", price: 199, credits: 200, desc: "200 scans, never expire", badge: "⭐ BEST VALUE", color: "#c060ff", btnText: "BUY ₹199" },
+  { id: "starter", name: "STARTER", price: 19, credits: 10, desc: "10 scans, never expire", badge: null, color: "#00ffe0", btnText: "BUY ₹19" },
+  { id: "popular", name: "POPULAR", price: 129, credits: 100, desc: "100 scans, never expire", badge: "🔥 MOST POPULAR", color: "#ffe600", btnText: "BUY ₹129" },
+  { id: "power", name: "POWER", price: 299, credits: 300, desc: "300 scans, never expire", badge: "⭐ BEST VALUE", color: "#c060ff", btnText: "BUY ₹299" },
 ];
 
 export default function Pricing() {
