@@ -1,9 +1,9 @@
 import Razorpay from "razorpay";
 
 const PACKS = {
-  starter: { amount: 1000, credits: 7, name: "Starter Pack" },
-  popular: { amount: 9900, credits: 80, name: "Popular Pack" },
-  power: { amount: 19900, credits: 200, name: "Power Pack" },
+  starter: { amount: 1900, credits: 10, name: "Starter Pack" },
+  popular: { amount: 12900, credits: 100, name: "Popular Pack" },
+  power: { amount: 29900, credits: 300, name: "Power Pack" },
 };
 
 export default async function handler(req, res) {
