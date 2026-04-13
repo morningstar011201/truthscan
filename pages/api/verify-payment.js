@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     credits: totalCredits,
     payment_id: razorpay_payment_id,
     order_id: razorpay_order_id,
-    status: "success"
+    status: "success",
     promo_code: promoData ? promoData.code : null
   });
 
