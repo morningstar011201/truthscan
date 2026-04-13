@@ -2,9 +2,9 @@ import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const PACKS = {
-  starter: { credits: 7, amount: 10 },
-  popular: { credits: 80, amount: 99 },
-  power: { credits: 200, amount: 199 },
+  starter: { credits: 10, amount: 19 },
+  popular: { credits: 100, amount: 129 },
+  power: { credits: 300, amount: 299 },
 };
 
 export default async function handler(req, res) {
