@@ -557,9 +557,9 @@ export default function Admin() {
                     <div style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, color: "#445060", marginBottom: 8 }}>🛒 PACK BREAKDOWN</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                       {[
-                        { name: "STARTER ₹10", pack: "starter", color: "#00ffe0" },
-                        { name: "POPULAR ₹99", pack: "popular", color: "#ffe600" },
-                        { name: "POWER ₹199", pack: "power", color: "#c060ff" },
+                        { name: "STARTER ₹19", pack: "starter", color: "#00ffe0" },
+                        { name: "POPULAR ₹129", pack: "popular", color: "#ffe600" },
+                        { name: "POWER ₹299", pack: "power", color: "#c060ff" },
                       ].map((pack, j) => (
                         <div key={j} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: "10px 12px", border: `1px solid ${pack.color}22` }}>
                           <div style={{ fontFamily: "monospace", fontSize: 9, color: "#445060", marginBottom: 4 }}>{pack.name}</div>
