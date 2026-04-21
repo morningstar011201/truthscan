@@ -262,7 +262,7 @@ export default function Admin() {
 
       {/* TABS */}
       <div style={{ ...s.wrap, display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-        {["overview", "payments", "users", "scans", "promos", "controls"].map(t => (
+        {["overview", "payments", "users", "scans", "promos", "views", "controls"].map(t => (
           <button key={t} onClick={() => setActiveTab(t)} style={s.tab(activeTab === t)}>{t.toUpperCase()}</button>
         ))}
       </div>
