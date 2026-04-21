@@ -599,6 +599,53 @@ export default function Admin() {
           </div>
         )}
 
+        {/* PAGE VIEWS */}
+        {activeTab === "views" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={s.grid3}>
+              {[
+                { label: "TOTAL PAGE VIEWS", value: stats.pageViews?.total || 0, color: "#00ffe0" },
+                { label: "PAGES TRACKED", value: stats.pageViews?.byPage?.length || 0, color: "#c060ff" },
+                { label: "VIEWS LAST 24H", value: stats.pageViews?.byPage?.reduce((sum, p) => sum + p.last24h, 0) || 0, color: "#ffe600" },
+              ].map((item, i) => (
+                 <div key={i} style={s.card}>
+                  <div style={s.label}>{item.label}</div>
+                  <div style={{ ...s.big, color: item.color }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+
+           <div style={s.card}>
+            <div style={s.label}>📊 VIEWS PER PAGE</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
+              {stats.pageViews?.byPage?.map((p, i) => (
+                <div key={i} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: "14px 16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, flexWrap: "wrap", gap: 6 }}>
+                    <div style={{ fontFamily: "monospace", fontSize: 12, color: "#00ffe0", fontWeight: 700 }}>{p.page}</div>
+                    <div style={{ fontFamily: "monospace", fontSize: 11, color: "#ffe600", fontWeight: 900 }}>TOTAL: {p.total}</div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                    {[
+                      { label: "LAST 24H", value: p.last24h, color: "#00e85a" },
+                      { label: "LAST 7 DAYS", value: p.last7d, color: "#00ffe0" },
+                      { label: "LAST 30 DAYS", value: p.last30d, color: "#c060ff" },
+                    ].map((stat, j) => (
+                      <div key={j} style={{ textAlign: "center", background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "10px 8px" }}>
+                        <div style={{ fontFamily: "monospace", fontSize: 8, color: "#445060", marginBottom: 4 }}>{stat.label}</div>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: stat.color }}>{stat.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              {(!stats.pageViews?.byPage?.length) && (
+                <div style={{ color: "#8899aa", fontSize: 13 }}>No page views tracked yet — deploy the tracker first!</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
         {/* CONTROLS */}
         {activeTab === "controls" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
