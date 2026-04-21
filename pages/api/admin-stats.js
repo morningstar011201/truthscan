@@ -100,6 +100,7 @@ export default async function handler(req, res) {
   const { data: payments } = await supabase.from("payments").select("*").order("created_at", { ascending: false });
   const { data: scans } = await supabase.from("scan_results").select("*").order("created_at", { ascending: false });
   const { data: promoCodes } = await supabase.from("promo_codes").select("*").order("created_at", { ascending: false });
+  const { data: pageViews } = await supabase.from("page_views").select("page, visited_at").order("visited_at", { ascending: false });
 
   const todayUsers = allUsers?.filter(u => u.created_at?.startsWith(today)) || [];
   const weekUsers = allUsers?.filter(u => new Date(u.created_at) > new Date(weekAgo)) || [];
