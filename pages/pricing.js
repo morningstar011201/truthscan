@@ -20,6 +20,8 @@ export default function Pricing() {
   const [promoLoading, setPromoLoading] = useState(false);
 
   useEffect(() => {
+    fetch("/api/track-view", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ page: "/pricing" }) }).catch(() => {});
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
