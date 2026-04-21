@@ -180,6 +180,26 @@ export default async function handler(req, res) {
   const totalPromoRevenue = promoPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
 
   res.json({
+    pageViews: (() => {
+  const now = Date.now();
+  const h24 = new Date(now - 86400000).toISOString();
+  const w1 = new Date(now - 7 * 86400000).toISOString();
+  const m1 = new Date(now - 30 * 86400000).toISOString();
+  const pages = [...new Set(pageViews?.map(v => v.page) || [])];
+  return {
+    total: pageViews?.length || 0,
+    byPage: pages.map(page => {
+      const views = pageViews?.filter(v => v.page === page) || [];
+      return {
+        page,
+        total: views.length,
+        last24h: views.filter(v => v.visited_at > h24).length,
+        last7d: views.filter(v => v.visited_at > w1).length,
+        last30d: views.filter(v => v.visited_at > m1).length,
+      };
+    }).sort((a, b) => b.total - a.total)
+  };
+})(),
     users: { total: allUsers?.length || 0, today: todayUsers.length, week: weekUsers.length, paying: payingUserIds.length, activeToday, all: allUsers || [] },
     revenue: { total: totalRevenue, today: todayRevenue, month: monthRevenue, arppu },
     scans: { total: scans?.length || 0, today: todayScans.length, yesterday: yesterdayScans.length, perDay: scansPerDay, avgPerUser: avgScansPerUser },
