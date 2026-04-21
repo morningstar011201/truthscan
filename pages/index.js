@@ -65,6 +65,8 @@ export default function TruthScan() {
 
   useEffect(() => {
     const s = document.createElement("script");
+    fetch("/api/track-view", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ page: "/" }) }).catch(() => {});
+    
     s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
     document.head.appendChild(s);
 
