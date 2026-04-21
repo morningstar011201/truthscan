@@ -18,6 +18,10 @@ const posts = [
 ];
 
 export default function Blog() {
+  useEffect(() => {
+    fetch("/api/track-view", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ page: "/blog" }) }).catch(() => {});
+  }, []);
+  
   return (
     <>
       <Head>
