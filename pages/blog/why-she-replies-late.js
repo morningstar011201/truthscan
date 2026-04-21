@@ -1,6 +1,10 @@
+import { useEffect } from "react";
 import Head from "next/head";
 
 export default function WhyShereRepliesLate() {
+  useEffect(() => {
+    fetch("/api/track-view", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ page: "/blog/why-she-replies-late" }) }).catch(() => {});
+  }, []);
   const s = {
     page: {
       minHeight: "100vh",
