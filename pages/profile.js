@@ -17,6 +17,8 @@ export default function ProfilePage() {
   const [showPass, setShowPass] = useState(false);
 
   useEffect(() => {
+    fetch("/api/track-view", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ page: "/profile" }) }).catch(() => {});
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = "/"; return; }
       setUser(session.user);
