@@ -1,6 +1,10 @@
+import { useEffect } from "react";
 import Head from "next/head";
 
 export default function MixedSignalsOverText() {
+  useEffect(() => {
+    fetch("/api/track-view", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ page: "/blog/mixed-signals-over-text" }) }).catch(() => {});
+  }, []);
   const s = {
     page: { minHeight: "100vh", background: "#080b10", color: "#dde2ea", fontFamily: "'Segoe UI', sans-serif", padding: "0 16px 80px" },
     nav: { maxWidth: 680, margin: "0 auto", padding: "20px 0", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.05)" },
